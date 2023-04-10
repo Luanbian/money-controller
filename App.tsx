@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text } from 'react-native';
+import Home from './src/views/Home';
 
 export default function App() {
   return (
     <>
-      <Text>Hello World</Text>
+      <Home />
     </>
   );
 }
