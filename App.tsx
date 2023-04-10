@@ -1,10 +1,10 @@
 import React from 'react';
-import Home from './src/views/Home';
+import Routes from './src/routes/routes';
 
 export default function App() {
   return (
     <>
-      <Home />
+      <Routes />
     </>
   );
 }
