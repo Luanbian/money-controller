@@ -1,6 +1,11 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { View, Text } from 'react-native';
+import { styles } from '../styles/home.styled';
 
 export default function Home() {
-  return <Text>Home</Text>;
+  return (
+    <View style={styles.container}>
+      <Text>Home</Text>
+    </View>
+  );
 }
