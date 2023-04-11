@@ -55,34 +55,10 @@ export class GmailGateway implements IGmailGateway {
       userId: 'me',
       id: filtered,
     });
-    const payload = res.data.payload;
-    if (!payload) {
-      console.log('No payload found.');
-      return;
+    const teste = res.data.payload?.body?.data;
+    if (teste) {
+      const decodedBody = Buffer.from(teste, 'base64').toString();
+      console.log(decodedBody);
     }
-    const messageParts = payload.parts;
-    if (!messageParts) {
-      console.log('No message parts found.');
-      return;
-    }
-    const textPlainParts = messageParts.filter(
-      (part) => part.mimeType === 'text/plain'
-    );
-    if (textPlainParts.length === 0) {
-      console.log('No text/plain parts found.');
-      return;
-    }
-    const body = textPlainParts[0].body;
-    if (!body) {
-      console.log('No body found.');
-      return;
-    }
-    const data = body.data;
-    if (!data) {
-      console.log('No data found.');
-      return;
-    }
-    const decodedBody = Buffer.from(data, 'base64').toString();
-    console.log(decodedBody);
   }
 }
