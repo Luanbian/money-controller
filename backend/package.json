@@ -13,9 +13,11 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "google-auth-library": "^8.7.0",
-    "googleapis": "^105.0.0"
+    "googleapis": "^105.0.0",
+    "html-to-text": "^9.0.5"
   },
   "devDependencies": {
+    "@types/html-to-text": "^9.0.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.4"
   }

@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { IGmailGateway } from '../interfaces/interfaces';
+import { htmlToText } from 'html-to-text';
 
 export class GmailGateway implements IGmailGateway {
   constructor() {
@@ -35,6 +36,7 @@ export class GmailGateway implements IGmailGateway {
       });
     });
     const results = await Promise.all(promises);
+    const filteredIds: string[] = [];
     results.forEach((res) => {
       const headers = res.data.payload?.headers;
       const id = res.data.id;
@@ -43,22 +45,30 @@ export class GmailGateway implements IGmailGateway {
       if (subject?.toLowerCase().includes('pix')) {
         const filtered = id;
         if (filtered) {
-          this.listMessage(auth, filtered);
+          filteredIds.push(filtered);
         }
       }
     });
+    this.listMessage(auth, filteredIds);
   }
 
-  async listMessage(auth: string, filtered: string): Promise<void> {
+  async listMessage(auth: string, filteredIds: string[]): Promise<void> {
     const gmail = google.gmail({ version: 'v1', auth });
-    const res = await gmail.users.messages.get({
-      userId: 'me',
-      id: filtered,
+    const promises = filteredIds.map((id) => {
+      return gmail.users.messages.get({
+        userId: 'me',
+        id: id,
+      });
     });
-    const teste = res.data.payload?.body?.data;
-    if (teste) {
-      const decodedBody = Buffer.from(teste, 'base64').toString();
-      console.log(decodedBody);
-    }
+    const results = await Promise.all(promises);
+    const content: string[] = [];
+    results.forEach((res) => {
+      const body = res.data.payload?.body?.data;
+      if (body) {
+        const decodedBody = Buffer.from(body, 'base64').toString();
+        const readable = htmlToText(decodedBody);
+        content.push(readable);
+      }
+    });
   }
 }
