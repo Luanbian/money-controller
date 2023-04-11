@@ -34,22 +34,20 @@ export class GmailGateway implements IGmailGateway {
         id: id,
       });
     });
-    const allSubjects: any = [];
     const results = await Promise.all(promises);
     results.forEach((res) => {
       const headers = res.data.payload?.headers;
       const id = res.data.id;
       const subject = headers?.filter((header) => header.name === 'Subject')[0]
         .value;
-      if (subject) {
-        allSubjects.push({ subject: subject, id: id });
+      if (subject?.includes('PIX')) {
+        const filtered = {
+          id: id,
+          subject: subject,
+        };
+        console.log(filtered);
       }
     });
-
-    const filtered = allSubjects.filter((content: any) =>
-      content.subject.includes('PIX')
-    );
-    console.log(filtered);
   }
 
   async listMessage(auth: string, messageId: string): Promise<void> {
