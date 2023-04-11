@@ -1,9 +1,12 @@
 import { google } from 'googleapis';
-import { IGmailGateway } from '../interfaces/interfaces';
+import { IGmailController, IGmailGateway } from '../interfaces/interfaces';
 import { htmlToText } from 'html-to-text';
 
 export class GmailGateway implements IGmailGateway {
-  constructor() {
+  private gmailController: IGmailController;
+
+  constructor(gmailController: IGmailController) {
+    this.gmailController = gmailController;
     this.getMessageId = this.getMessageId.bind(this);
     this.listMessage = this.listMessage.bind(this);
     this.listSubject = this.listSubject.bind(this);
@@ -70,5 +73,6 @@ export class GmailGateway implements IGmailGateway {
         content.push(readable);
       }
     });
+    await this.gmailController.getValue(content);
   }
 }
