@@ -5,6 +5,7 @@ export class GmailGateway implements IGmailGateway {
   constructor() {
     this.getMessageId = this.getMessageId.bind(this);
     this.listMessage = this.listMessage.bind(this);
+    this.listSubject = this.listSubject.bind(this);
   }
 
   async getMessageId(auth: string) {
@@ -18,10 +19,28 @@ export class GmailGateway implements IGmailGateway {
       console.log('No labels found.');
       return;
     }
-    const messageId = labels[3].id;
-    if (messageId) {
-      this.listMessage(auth, messageId);
-    }
+    const messageId: string[] = [];
+    labels.forEach((label) => {
+      messageId.push(`${label.id}`);
+    });
+    this.listSubject(auth, messageId);
+  }
+
+  async listSubject(auth: string, messageId: string[]) {
+    const gmail = google.gmail({ version: 'v1', auth });
+    const promises = messageId.map((id) => {
+      return gmail.users.messages.get({
+        userId: 'me',
+        id: id,
+      });
+    });
+    const results = await Promise.all(promises);
+    results.forEach((res) => {
+      const headers = res.data.payload?.headers;
+      const subject = headers?.filter((header) => header.name === 'Subject')[0]
+        .value;
+      console.log(subject);
+    });
   }
 
   async listMessage(auth: string, messageId: string): Promise<void> {
