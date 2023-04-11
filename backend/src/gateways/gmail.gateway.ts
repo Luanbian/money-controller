@@ -40,7 +40,7 @@ export class GmailGateway implements IGmailGateway {
       const id = res.data.id;
       const subject = headers?.filter((header) => header.name === 'Subject')[0]
         .value;
-      if (subject?.includes('PIX')) {
+      if (subject?.toLowerCase().includes('pix')) {
         const filtered = id;
         if (filtered) {
           this.listMessage(auth, filtered);
