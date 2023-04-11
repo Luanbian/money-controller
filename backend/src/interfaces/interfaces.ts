@@ -1,4 +1,8 @@
 export interface IGmailController {
-  listLabels(auth: string): void;
-  teste(auth: string, messageId: string): void;
+
+}
+
+export interface IGmailGateway {
+  getMessageId(auth: string): void;
+  listMessage(auth: string, messageId: string): void;
 }

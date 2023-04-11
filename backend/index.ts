@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-import { makeGmailController } from './src/app/factories';
-const gmailController = makeGmailController();
+import { makeGmailGateway } from './src/app/factories';
+const gmailGateway = makeGmailGateway();
 
 const fs = require('fs').promises;
 const path = require('path');
@@ -53,4 +53,4 @@ async function authorize() {
   return client;
 }
 
-authorize().then(gmailController.listLabels).catch(console.error);
+authorize().then(gmailGateway.getMessageId).catch(console.error);
