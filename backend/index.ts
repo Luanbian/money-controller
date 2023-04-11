@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { GmailController } from './src/controllers/gmail.controller';
-const listLabels = new GmailController().listLabels;
+
+import { makeGmailController } from './src/app/factories';
+const gmailController = makeGmailController();
+
 const fs = require('fs').promises;
 const path = require('path');
 const procedure = require('process');
@@ -51,4 +53,4 @@ async function authorize() {
   return client;
 }
 
-authorize().then(listLabels).catch(console.error);
+authorize().then(gmailController.listLabels).catch(console.error);
