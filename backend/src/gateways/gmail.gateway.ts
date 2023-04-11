@@ -41,20 +41,19 @@ export class GmailGateway implements IGmailGateway {
       const subject = headers?.filter((header) => header.name === 'Subject')[0]
         .value;
       if (subject?.includes('PIX')) {
-        const filtered = {
-          id: id,
-          subject: subject,
-        };
-        console.log(filtered);
+        const filtered = id;
+        if (filtered) {
+          this.listMessage(auth, filtered);
+        }
       }
     });
   }
 
-  async listMessage(auth: string, messageId: string): Promise<void> {
+  async listMessage(auth: string, filtered: string): Promise<void> {
     const gmail = google.gmail({ version: 'v1', auth });
     const res = await gmail.users.messages.get({
       userId: 'me',
-      id: messageId,
+      id: filtered,
     });
     const payload = res.data.payload;
     if (!payload) {
