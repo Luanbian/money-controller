@@ -1,7 +1,13 @@
 import { IGmailController } from '../interfaces/interfaces';
 
 export class GmailController implements IGmailController {
-  async getValue(content: string[]): Promise<void> {
-    console.log(content);
+  private content?: string[];
+
+  async setContent(content: string[]): Promise<void> {
+    this.content = content;
+  }
+
+  async getValue() {
+    console.log(this.content);
   }
 }

@@ -73,6 +73,6 @@ export class GmailGateway implements IGmailGateway {
         content.push(readable);
       }
     });
-    await this.gmailController.getValue(content);
+    await this.gmailController.setContent(content);
   }
 }
