@@ -1,5 +1,6 @@
 export interface IGmailController {
   setContent(content: string[]): Promise<void>;
+  getValue(): Promise<void>;
 }
 
 export interface IGmailGateway {
