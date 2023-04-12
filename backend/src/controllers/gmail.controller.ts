@@ -70,15 +70,23 @@ export class GmailController implements IGmailController {
     return banks;
   }
 
+  private async relatingValueBank(values: string[], banks: string[]) {
+    const relate: [number, string][] = [];
+    for (let i = 0; i < values.length; i++) {
+      const value = parseFloat(values[i].replace(".", "").replace(",", "."));
+      const bank = banks[i];
+      relate.push([value, bank]);
+    }
+    return relate;
+  }
+
   async getAttributes() {
     const attributes = await this.setAttributes();
     const convertMessage = await this.convertMessageToArray(attributes.messages);
     const convertBank = await this.convertBankToArray(attributes.banks);
     const values = await this.getValues(convertMessage);
     const banks = await this.getBanks(convertBank);
-    return {
-      values,
-      banks
-    };
+    const relate = await this.relatingValueBank(values, banks);
+    return relate;
   }
 }
