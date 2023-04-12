@@ -58,6 +58,25 @@ export class GmailGateway implements IGmailGateway {
     return filteredIds;
   }
 
+  private async getBank(auth: string, filteredIds: string[]): Promise<string[]> {
+    const gmail = google.gmail({ version: 'v1', auth });
+    const promises = filteredIds.map((id) => {
+      return gmail.users.messages.get({
+        userId: 'me',
+        id: id
+      });
+    })
+    const results = await Promise.all(promises);
+    const banks: string[] = [];
+    results.forEach((res) => {
+      const from = res.data.payload?.headers?.find((header) => header.name === 'From')?.value
+      if (from) {
+        banks.push(from);
+      }
+    })
+    return banks;
+  }
+
   private async listMessages(auth: string, filteredIds: string[]): Promise<string[]> {
     const gmail = google.gmail({ version: 'v1', auth });
     const promises = filteredIds.map((id) => {
@@ -79,11 +98,15 @@ export class GmailGateway implements IGmailGateway {
     return contents;
   }
 
-  async getMessages(auth: string) {
+  async getAttributes(auth: string) {
     const messageIds = await this.getMessageIds(auth);
     const subjects = await this.listSubjects(auth, messageIds);
     const filterSubjects = await this.filterSubjects(subjects);
+    const banks = await this.getBank(auth, filterSubjects);
     const messages = await this.listMessages(auth, filterSubjects);
-    return messages;
+    return {
+      banks,
+      messages
+    };
   }
 }

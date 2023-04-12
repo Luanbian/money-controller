@@ -4,11 +4,11 @@ import { authorize } from '../..';
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  private async setMessages(): Promise<string[]> {
+  private async setAttributes(): Promise<{messages: string[], banks: string[]}> {
     try {
       const auth = await authorize()
-      const messages = await this.gmailGateway.getMessages(auth);
-      return messages;
+      const attributes = await this.gmailGateway.getAttributes(auth);
+      return attributes;
     } catch (error: any) {
       throw new Error(error)
     }
@@ -42,9 +42,9 @@ export class GmailController implements IGmailController {
     return values;
   }
 
-  async getAtributes() {
-    const messages = await this.setMessages();
-    const convertMessage = await this.convertMessageToArray(messages);
+  async getAttributes() {
+    const attributes = await this.setAttributes();
+    const convertMessage = await this.convertMessageToArray(attributes.messages);
     const value = await this.getValue(convertMessage);
     return value;
   }

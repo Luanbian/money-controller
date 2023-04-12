@@ -5,6 +5,6 @@ export const router = Router();
 const gmailController = makeGmailController();
 
 router.get('/', async (req, res) => {
-    const result = await gmailController.getAtributes();
+    const result = await gmailController.getAttributes();
     res.json(result);
 });
