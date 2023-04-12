@@ -53,4 +53,6 @@ async function authorize() {
   return client;
 }
 
-authorize().then(gmailGateway.getMessageId).catch(console.error);
+authorize()
+  .then((auth) => gmailGateway.getMessages(auth))
+  .catch(console.error);

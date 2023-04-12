@@ -1,18 +1,15 @@
+/* eslint-disable prettier/prettier */
 import { google } from 'googleapis';
-import { IGmailController, IGmailGateway } from '../interfaces/interfaces';
 import { htmlToText } from 'html-to-text';
+import { IGmailGateway } from '../interfaces/interfaces';
+
+type SubjectType = {
+  headers?: { name?: string | null; value?: string | null }[] | null;
+  id?: string | null;
+}[];
 
 export class GmailGateway implements IGmailGateway {
-  private gmailController: IGmailController;
-
-  constructor(gmailController: IGmailController) {
-    this.gmailController = gmailController;
-    this.getMessageId = this.getMessageId.bind(this);
-    this.listMessage = this.listMessage.bind(this);
-    this.listSubject = this.listSubject.bind(this);
-  }
-
-  async getMessageId(auth: string) {
+  private async getMessageIds(auth: string): Promise<string[]> {
     const gmail = google.gmail({ version: 'v1', auth });
     const res = await gmail.users.messages.list({
       userId: 'me',
@@ -20,29 +17,35 @@ export class GmailGateway implements IGmailGateway {
     });
     const labels = res.data.messages;
     if (!labels || labels.length === 0) {
-      console.log('No labels found.');
-      return;
+      throw new Error('No labels found');
     }
-    const messageId: string[] = [];
+    const messageIds: string[] = [];
     labels.forEach((label) => {
-      messageId.push(`${label.id}`);
+      messageIds.push(`${label.id}`);
     });
-    this.listSubject(auth, messageId);
+    return messageIds;
   }
 
-  async listSubject(auth: string, messageId: string[]) {
+  private async listSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
     const gmail = google.gmail({ version: 'v1', auth });
-    const promises = messageId.map((id) => {
+    const promises = messageIds.map((id) => {
       return gmail.users.messages.get({
         userId: 'me',
         id: id,
       });
     });
     const results = await Promise.all(promises);
-    const filteredIds: string[] = [];
-    results.forEach((res) => {
+    const subjects = results.map((res) => {
       const headers = res.data.payload?.headers;
       const id = res.data.id;
+      return { headers, id };
+    });
+    return subjects;
+  }
+
+  private async filterSubjects(subjects: SubjectType): Promise<string[]> {
+    const filteredIds: string[] = [];
+    subjects.forEach(({headers, id}) => {
       const subject = headers?.filter((header) => header.name === 'Subject')[0]
         .value;
       if (subject?.toLowerCase().includes('pix')) {
@@ -52,10 +55,10 @@ export class GmailGateway implements IGmailGateway {
         }
       }
     });
-    this.listMessage(auth, filteredIds);
+    return filteredIds;
   }
 
-  async listMessage(auth: string, filteredIds: string[]): Promise<void> {
+  private async listMessages(auth: string, filteredIds: string[]): Promise<string[]> {
     const gmail = google.gmail({ version: 'v1', auth });
     const promises = filteredIds.map((id) => {
       return gmail.users.messages.get({
@@ -64,15 +67,23 @@ export class GmailGateway implements IGmailGateway {
       });
     });
     const results = await Promise.all(promises);
-    const content: string[] = [];
+    const contents: string[] = [];
     results.forEach((res) => {
       const body = res.data.payload?.body?.data;
       if (body) {
         const decodedBody = Buffer.from(body, 'base64').toString();
         const readable = htmlToText(decodedBody);
-        content.push(readable);
+        contents.push(readable);
       }
     });
-    await this.gmailController.setContent(content);
+    return contents;
+  }
+
+  async getMessages(auth: string) {
+    const messageIds = await this.getMessageIds(auth);
+    const subjects = await this.listSubjects(auth, messageIds);
+    const filterSubjects = await this.filterSubjects(subjects);
+    const messages = await this.listMessages(auth, filterSubjects);
+    return messages;
   }
 }

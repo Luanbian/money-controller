@@ -5,6 +5,5 @@ export const makeGmailController = () => {
   return new GmailController();
 };
 export const makeGmailGateway = () => {
-  const gmailController = makeGmailController();
-  return new GmailGateway(gmailController);
+  return new GmailGateway();
 };
