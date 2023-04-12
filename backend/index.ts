@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-import { makeGmailGateway } from './src/app/factories';
-const gmailGateway = makeGmailGateway();
-
 const fs = require('fs').promises;
 const path = require('path');
 const procedure = require('process');
@@ -38,7 +35,7 @@ async function saveCredentials(client: any) {
   await fs.writeFile(TOKEN_PATH, payload);
 }
 
-async function authorize() {
+export async function authorize() {
   let client = await loadSavedCredentialsIfExist();
   if (client) {
     return client;
@@ -52,7 +49,3 @@ async function authorize() {
   }
   return client;
 }
-
-authorize()
-  .then((auth) => gmailGateway.getMessages(auth))
-  .catch(console.error);

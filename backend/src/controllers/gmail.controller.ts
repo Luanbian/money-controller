@@ -1,4 +1,5 @@
 import { IGmailController, IGmailGateway } from '../interfaces/interfaces';
+import { authorize } from '../..';
 
 export class GmailController implements IGmailController {
   private content?: string[];
@@ -6,8 +7,13 @@ export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
   async setMessages(): Promise<string[]> {
-    const messages = await this.gmailGateway.getMessages();
-    return messages;
+    try {
+      const auth = await authorize()
+      const messages = await this.gmailGateway.getMessages(auth);
+      return messages;
+    } catch (error: any) {
+      throw new Error(error)
+    }
   }
 
   async getValue() {

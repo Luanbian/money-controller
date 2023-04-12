@@ -4,5 +4,5 @@ export interface IGmailController {
 }
 
 export interface IGmailGateway {
-  getMessages(auth?: string): Promise<string[]>;
+  getMessages(auth: string): Promise<string[]>;
 }

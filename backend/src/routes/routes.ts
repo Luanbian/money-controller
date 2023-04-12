@@ -4,4 +4,7 @@ import { makeGmailController } from "../app/factories";
 export const router = Router();
 const gmailController = makeGmailController();
 
-router.get('/', () => {gmailController.setMessages()});
+router.get('/', async (req, res) => {
+    const result = await gmailController.setMessages();
+    res.json(result);
+});
