@@ -1,6 +1,5 @@
 export interface IGmailController {
-  setMessages(): Promise<string[]>;
-  getValue(): Promise<void>;
+  getAtributes(): Promise<string[]>;
 }
 
 export interface IGmailGateway {
