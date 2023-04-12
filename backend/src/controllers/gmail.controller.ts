@@ -24,7 +24,17 @@ export class GmailController implements IGmailController {
     return messageArray;
   }
 
-  private async getValue(messageArray: string[]) {
+  private async convertBankToArray(bank: string[]) {
+    const cleanBank: string[][] = [];
+    bank.map((el) => {
+      const element = el.replace('.com', ' ').replace('@', ' ').replace('>', '').split(' ');
+      cleanBank.push(element);
+    });
+    const bankArray = cleanBank.flat();
+    return bankArray;
+  }
+
+  private async getValues(messageArray: string[]) {
     const keyWord = 'R$';
     const nextItem = 1;
     const valueIndex: number[] = [];
@@ -42,10 +52,33 @@ export class GmailController implements IGmailController {
     return values;
   }
 
+  private async getBanks(bankArray: string[]) {
+    const keyWord = '.br';
+    const previousItem = 1;
+    const valueIndex: number[] = [];
+    const banks: string[] = [];
+    if (bankArray) {
+      for(let i = 0; i < bankArray.length; i++) {
+        if(bankArray[i] === keyWord) {
+          valueIndex.push(i - previousItem);
+        }
+      }
+      for(let i = 0; i < valueIndex.length; i++) {
+        banks.push(bankArray[valueIndex[i]]);
+      }
+    }
+    return banks;
+  }
+
   async getAttributes() {
     const attributes = await this.setAttributes();
     const convertMessage = await this.convertMessageToArray(attributes.messages);
-    const value = await this.getValue(convertMessage);
-    return value;
+    const convertBank = await this.convertBankToArray(attributes.banks);
+    const values = await this.getValues(convertMessage);
+    const banks = await this.getBanks(convertBank);
+    return {
+      values,
+      banks
+    };
   }
 }

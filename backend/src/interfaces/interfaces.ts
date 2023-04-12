@@ -1,5 +1,5 @@
 export interface IGmailController {
-  getAttributes(): Promise<string[]>;
+  getAttributes(): Promise<{values: string[], banks: string[]}>;
 }
 
 export interface IGmailGateway {
