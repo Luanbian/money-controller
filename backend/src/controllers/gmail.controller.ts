@@ -14,6 +14,20 @@ export class GmailController implements IGmailController {
   }
 
   async getValue() {
-    console.log(this.content);
+    const keyWord = 'R$';
+    const nextItem = 1;
+    const valueIndex: number[] = [];
+    const values: string[] = [];
+    if (this.content) {
+      for (let i = 0; i < this.content.length; i++) {
+        if (this.content[i] === keyWord) {
+          valueIndex.push(i + nextItem);
+        }
+      }
+      for (let i = 0; i < valueIndex.length; i++) {
+        values.push(this.content[valueIndex[i]]);
+      }
+    }
+    console.log(values);
   }
 }
