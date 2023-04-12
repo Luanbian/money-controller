@@ -1,7 +1,9 @@
-import { IGmailController } from '../interfaces/interfaces';
+import { IGmailController, IGmailGateway } from '../interfaces/interfaces';
 
 export class GmailController implements IGmailController {
   private content?: string[];
+
+  constructor(private readonly gmailGateway: IGmailGateway) {}
 
   async setMessages(content: string[]): Promise<void> {
     const cleanContent: string[][] = [];
