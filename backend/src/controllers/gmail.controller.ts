@@ -5,14 +5,9 @@ export class GmailController implements IGmailController {
 
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  async setMessages(content: string[]): Promise<void> {
-    const cleanContent: string[][] = [];
-    content.map((el) => {
-      const element = el.replace(/\n/g, ' ').split(' ');
-      cleanContent.push(element);
-    });
-    this.content = cleanContent.flat();
-    this.getValue();
+  async setMessages(): Promise<void> {
+    const messages = await this.gmailGateway.getMessages();
+    console.log(messages);
   }
 
   async getValue() {
