@@ -4,7 +4,7 @@ import { authorize } from '../..';
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  private async setAttributes(): Promise<{messages: string[], banks: string[]}> {
+  private async setAttributes(): Promise<{messages: string[], banks: string[], dates:string[]}> {
     try {
       const auth = await authorize()
       const attributes = await this.gmailGateway.getAttributes(auth);
@@ -33,6 +33,21 @@ export class GmailController implements IGmailController {
     const bankArray = cleanBank.flat();
     return bankArray;
   }
+
+  private async getDates(date: string[]) {
+  const formatarDataHora = (data: string): string => {
+    const dataObj = new Date(data);
+    const dia = String(dataObj.getDate()).padStart(2, '0');
+    const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+    const ano = dataObj.getFullYear();
+    const hora = String(dataObj.getHours()).padStart(2, '0');
+    const minuto = String(dataObj.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+  };
+  const dates = date.map((data) => formatarDataHora(data));
+  return dates;
+}
+
 
   private async getValues(messageArray: string[]) {
     const keyWord = 'R$';
@@ -70,12 +85,13 @@ export class GmailController implements IGmailController {
     return banks;
   }
 
-  private async relatingValueBank(values: string[], banks: string[]) {
-    const relate: [number, string][] = [];
+  private async relatingDatas(values: string[], banks: string[], dates: string[]) {
+    const relate: [number, string, string][] = [];
     for (let i = 0; i < values.length; i++) {
       const value = parseFloat(values[i].replace(".", "").replace(",", "."));
       const bank = banks[i];
-      relate.push([value, bank]);
+      const date = dates[i];
+      relate.push([value, bank, date]);
     }
     return relate;
   }
@@ -84,9 +100,10 @@ export class GmailController implements IGmailController {
     const attributes = await this.setAttributes();
     const convertMessage = await this.convertMessageToArray(attributes.messages);
     const convertBank = await this.convertBankToArray(attributes.banks);
+    const dates = await this.getDates(attributes.dates);
     const values = await this.getValues(convertMessage);
     const banks = await this.getBanks(convertBank);
-    const relate = await this.relatingValueBank(values, banks);
+    const relate = await this.relatingDatas(values, banks, dates);
     return relate;
   }
 }
