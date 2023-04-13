@@ -1,5 +1,6 @@
 import { Attributestype, IGmailController, IGmailGateway, outputRelate } from '../interfaces/interfaces';
 import { authorize } from '../..';
+import { v4 } from 'uuid';
 
 type inputRelate = {
   values: string[],
@@ -41,18 +42,18 @@ export class GmailController implements IGmailController {
   }
 
   private async getDates(date: string[]) {
-  const formatarDataHora = (data: string): string => {
-    const dataObj = new Date(data);
-    const dia = String(dataObj.getDate()).padStart(2, '0');
-    const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
-    const ano = dataObj.getFullYear();
-    const hora = String(dataObj.getHours()).padStart(2, '0');
-    const minuto = String(dataObj.getMinutes()).padStart(2, '0');
-    return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
-  };
-  const dates = date.map((data) => formatarDataHora(data));
-  return dates;
-}
+    const formatarDataHora = (data: string): string => {
+      const dataObj = new Date(data);
+      const dia = String(dataObj.getDate()).padStart(2, '0');
+      const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+      const ano = dataObj.getFullYear();
+      const hora = String(dataObj.getHours()).padStart(2, '0');
+      const minuto = String(dataObj.getMinutes()).padStart(2, '0');
+      return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
+    };
+    const dates = date.map((data) => formatarDataHora(data));
+    return dates;
+  }
 
 
   private async getValues(messageArray: string[]) {
@@ -94,11 +95,12 @@ export class GmailController implements IGmailController {
   private async relatingDatas(relationship: inputRelate): Promise<outputRelate[]> {
     const relate: outputRelate[] = [];
     for (let i = 0; i < relationship.values.length; i++) {
+      const id = v4();
       const value = parseFloat(relationship.values[i].replace(',', '.'));
       const bank = relationship.banks[i];
       const date = relationship.dates[i];
       const transaction: outputRelate = {
-        value, bank, date
+        id, value, bank, date
       }
       relate.push(transaction);
     }

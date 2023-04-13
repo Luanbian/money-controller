@@ -5,6 +5,7 @@ export interface Attributestype {
 }
 
 export interface outputRelate {
+  id: string,
   value: number,
   bank: string,
   date: string
