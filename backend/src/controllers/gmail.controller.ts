@@ -1,10 +1,16 @@
-import { IGmailController, IGmailGateway } from '../interfaces/interfaces';
+import { Attributestype, IGmailController, IGmailGateway } from '../interfaces/interfaces';
 import { authorize } from '../..';
+
+type relationship = {
+  values: string[],
+  banks: string[],
+  dates: string[],
+}
 
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  private async setAttributes(): Promise<{messages: string[], banks: string[], dates:string[]}> {
+  private async setAttributes(): Promise<Attributestype> {
     try {
       const auth = await authorize()
       const attributes = await this.gmailGateway.getAttributes(auth);
@@ -85,12 +91,12 @@ export class GmailController implements IGmailController {
     return banks;
   }
 
-  private async relatingDatas(values: string[], banks: string[], dates: string[]) {
+  private async relatingDatas(relationship: relationship) {
     const relate: [number, string, string][] = [];
-    for (let i = 0; i < values.length; i++) {
-      const value = parseFloat(values[i].replace(".", "").replace(",", "."));
-      const bank = banks[i];
-      const date = dates[i];
+    for (let i = 0; i < relationship.values.length; i++) {
+      const value = parseFloat(relationship.values[i].replace(".", "").replace(",", "."));
+      const bank = relationship.banks[i];
+      const date = relationship.dates[i];
       relate.push([value, bank, date]);
     }
     return relate;
@@ -103,7 +109,8 @@ export class GmailController implements IGmailController {
     const dates = await this.getDates(attributes.dates);
     const values = await this.getValues(convertMessage);
     const banks = await this.getBanks(convertBank);
-    const relate = await this.relatingDatas(values, banks, dates);
+    const relationship: relationship = { values, banks, dates };
+    const relate = await this.relatingDatas(relationship);
     return relate;
   }
 }
