@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { google } from 'googleapis';
 import { htmlToText } from 'html-to-text';
-import { IGmailGateway } from '../interfaces/interfaces';
+import { GoogleAdapter, IGmailGateway } from '../interfaces/interfaces';
 
 type SubjectType = {
   headers?: { name?: string | null; value?: string | null }[] | null;
@@ -9,8 +8,10 @@ type SubjectType = {
 }[];
 
 export class GmailGateway implements IGmailGateway {
+  constructor(private readonly google: GoogleAdapter) {}
+
   private async getMessageIds(auth: string): Promise<string[]> {
-    const gmail = google.gmail({ version: 'v1', auth });
+    const gmail = this.google.gmail({ version: 'v1', auth });
     const res = await gmail.users.messages.list({
       userId: 'me',
       q: 'in:inbox',
@@ -27,7 +28,7 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async listSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
-    const gmail = google.gmail({ version: 'v1', auth });
+    const gmail = this.google.gmail({ version: 'v1', auth });
     const promises = messageIds.map((id) => {
       return gmail.users.messages.get({
         userId: 'me',
@@ -59,7 +60,7 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async getBank(auth: string, filteredIds: string[]): Promise<string[]> {
-    const gmail = google.gmail({ version: 'v1', auth });
+    const gmail = this.google.gmail({ version: 'v1', auth });
     const promises = filteredIds.map((id) => {
       return gmail.users.messages.get({
         userId: 'me',
@@ -78,7 +79,7 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async getDates(auth: string, filteredIds: string[]): Promise<string[]> {
-    const gmail = google.gmail({ version: 'v1', auth });
+    const gmail = this.google.gmail({ version: 'v1', auth });
     const promises = filteredIds.map((id) => {
       return gmail.users.messages.get({
         userId: 'me',
@@ -97,7 +98,7 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async listMessages(auth: string, filteredIds: string[]): Promise<string[]> {
-    const gmail = google.gmail({ version: 'v1', auth });
+    const gmail = this.google.gmail({ version: 'v1', auth });
     const promises = filteredIds.map((id) => {
       return gmail.users.messages.get({
         userId: 'me',
