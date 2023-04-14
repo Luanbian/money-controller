@@ -19,11 +19,17 @@ export class GmailGateway implements IGmailGateway {
     if (!labels || labels.length === 0) {
       throw new Error('No labels found');
     }
-    const messageIds: string[] = [];
-    labels.forEach((label) => {
-      messageIds.push(`${label.id}`);
+    return labels.map((label) => label.id);
+  }
+
+  private async getHeader(auth: string, id: string, headerName: string): Promise<string | undefined> {
+    const gmail = this.google.gmail({version: 'v1', auth});
+    const res = await gmail.users.messages.get({
+      userId: 'me',
+      id: id
     });
-    return messageIds;
+    const header = res.data.payload.headers?.find((header) => header.name === headerName)?.value;
+    if (header) return header;
   }
 
   private async listSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
@@ -59,40 +65,20 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async getBank(auth: string, filteredIds: string[]): Promise<string[]> {
-    const gmail = this.google.gmail({ version: 'v1', auth });
-    const promises = filteredIds.map((id) => {
-      return gmail.users.messages.get({
-        userId: 'me',
-        id: id
-      });
-    })
-    const results = await Promise.all(promises);
     const banks: string[] = [];
-    results.forEach((res) => {
-      const from = res.data.payload?.headers?.find((header) => header.name === 'From')?.value
-      if (from) {
-        banks.push(from);
-      }
-    })
+    for (const id of filteredIds) {
+      const from = await this.getHeader(auth, id, 'From');
+      if (from) banks.push(from);
+    }
     return banks;
   }
 
   private async getDates(auth: string, filteredIds: string[]): Promise<string[]> {
-    const gmail = this.google.gmail({ version: 'v1', auth });
-    const promises = filteredIds.map((id) => {
-      return gmail.users.messages.get({
-        userId: 'me',
-        id: id
-      });
-    })
-    const results = await Promise.all(promises);
     const dates: string[] = [];
-    results.forEach((res) => {
-      const date = res.data.payload?.headers?.find((header) => header.name === 'Date')?.value
-      if (date) {
-        dates.push(date);
-      }
-    })
+    for (const id of filteredIds) {
+      const date = await this.getHeader(auth, id, 'Date');
+      if (date) dates.push(date);
+    }
     return dates;
   }
 

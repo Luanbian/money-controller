@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { GmailGateway } from "./src/gateways/gmail.gateway";
 
 const fs = require('fs').promises;
 const path = require('path');
 const procedure = require('process');
 const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
+const transaction = new GmailGateway(google);
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
@@ -35,7 +37,7 @@ async function saveCredentials(client: any) {
   await fs.writeFile(TOKEN_PATH, payload);
 }
 
-export async function authorize() {
+async function authorize() {
   let client = await loadSavedCredentialsIfExist();
   if (client) {
     return client;
@@ -49,3 +51,5 @@ export async function authorize() {
   }
   return client;
 }
+
+authorize().then((auth) => transaction.getTransaction(auth)).catch((error) => console.log(error));
