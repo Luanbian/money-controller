@@ -4,7 +4,7 @@ import { makeGmailController } from "../app/factories";
 export const router = Router();
 const gmailController = makeGmailController();
 
-router.get('/', async (req, res) => {
+router.get('/history', async (req, res) => {
     const result = await gmailController.getAttributes();
     res.json(result);
 });
