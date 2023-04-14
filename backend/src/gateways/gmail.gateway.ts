@@ -1,10 +1,7 @@
 import { htmlToText } from 'html-to-text';
 import { GoogleAdapter, IGmailGateway } from '../interfaces/interfaces';
 
-type SubjectType = {
-  headers?: { name?: string | null; value?: string | null }[] | null;
-  id?: string | null;
-}[];
+type SubjectType = {headers?: string | null | undefined; id?: string | null | undefined}
 
 export class GmailGateway implements IGmailGateway {
   constructor(private readonly google: GoogleAdapter) {}
@@ -19,49 +16,34 @@ export class GmailGateway implements IGmailGateway {
     if (!labels || labels.length === 0) {
       throw new Error('No labels found');
     }
-    return labels.map((label) => label.id);
+    const messageIds = labels.map((label) => label.id);
+    return messageIds;
   }
 
-  private async getHeader(auth: string, id: string, headerName: string): Promise<string | undefined> {
+  private async getHeader(auth: string, id: string, headerName: string): Promise<string | undefined | SubjectType> {
     const gmail = this.google.gmail({version: 'v1', auth});
     const res = await gmail.users.messages.get({
       userId: 'me',
       id: id
     });
-    const header = res.data.payload.headers?.find((header) => header.name === headerName)?.value;
-    if (header) return header;
-  }
-
-  private async listSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
-    const gmail = this.google.gmail({ version: 'v1', auth });
-    const promises = messageIds.map((id) => {
-      return gmail.users.messages.get({
-        userId: 'me',
-        id: id,
-      });
-    });
-    const results = await Promise.all(promises);
-    const subjects = results.map((res) => {
-      const headers = res.data.payload?.headers;
+    if( headerName == 'Subject') {
+      const headers = res.data.payload?.headers?.filter((header) => header.name === 'Subject')[0].value
       const id = res.data.id;
       return { headers, id };
-    });
-    return subjects;
+    } else {
+      const header = res.data.payload.headers?.find((header) => header.name === headerName)?.value;
+      if (header) return header;
+    }
   }
 
-  private async filterSubjects(subjects: SubjectType): Promise<string[]> {
-    const filteredIds: string[] = [];
-    subjects.forEach(({headers, id}) => {
-      const subject = headers?.filter((header) => header.name === 'Subject')[0]
-        .value;
-      if (subject?.toLowerCase().includes('pix')) {
-        const filtered = id;
-        if (filtered) {
-          filteredIds.push(filtered);
-        }
-      }
-    });
-    return filteredIds;
+  private async getSubjects(auth: string, messageIds: string[]): Promise<string[]> {
+    const subjects: string[] = [];
+    for(const id of messageIds) {
+      const subject: SubjectType = await this.getHeader(auth, id, 'Subject')
+      if (subject.headers?.toLowerCase().includes('pix')) subjects.push(subject.id!);
+    }
+    console.log(subjects)
+    return subjects;
   }
 
   private async getBank(auth: string, filteredIds: string[]): Promise<string[]> {
@@ -105,11 +87,10 @@ export class GmailGateway implements IGmailGateway {
 
   async getTransaction(auth: string) {
     const messageIds = await this.getMessageIds(auth);
-    const subjects = await this.listSubjects(auth, messageIds);
-    const filterSubjects = await this.filterSubjects(subjects);
-    const banks = await this.getBank(auth, filterSubjects);
-    const messages = await this.listMessages(auth, filterSubjects);
-    const dates = await this.getDates(auth, filterSubjects);
+    const subjects = await this.getSubjects(auth, messageIds);
+    const banks = await this.getBank(auth, subjects);
+    const messages = await this.listMessages(auth, subjects);
+    const dates = await this.getDates(auth, subjects);
     return {
       banks,
       messages,
