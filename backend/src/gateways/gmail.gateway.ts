@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { htmlToText } from 'html-to-text';
 import { GoogleAdapter, IGmailGateway } from '../interfaces/interfaces';
 
@@ -118,7 +117,7 @@ export class GmailGateway implements IGmailGateway {
     return contents;
   }
 
-  async getAttributes(auth: string) {
+  async getTransaction(auth: string) {
     const messageIds = await this.getMessageIds(auth);
     const subjects = await this.listSubjects(auth, messageIds);
     const filterSubjects = await this.filterSubjects(subjects);

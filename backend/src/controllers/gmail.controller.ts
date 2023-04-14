@@ -14,8 +14,8 @@ export class GmailController implements IGmailController {
   private async setAttributes(): Promise<Attributestype> {
     try {
       const auth = await authorize()
-      const attributes = await this.gmailGateway.getAttributes(auth);
-      return attributes;
+      const transaction = await this.gmailGateway.getTransaction(auth);
+      return transaction;
     } catch (error: any) {
       throw new Error(error)
     }
@@ -108,10 +108,10 @@ export class GmailController implements IGmailController {
   }
 
   async getAttributes() {
-    const attributes = await this.setAttributes();
-    const convertMessage = await this.convertMessageToArray(attributes.messages);
-    const convertBank = await this.convertBankToArray(attributes.banks);
-    const dates = await this.getDates(attributes.dates);
+    const transaction = await this.setAttributes();
+    const convertMessage = await this.convertMessageToArray(transaction.messages);
+    const convertBank = await this.convertBankToArray(transaction.banks);
+    const dates = await this.getDates(transaction.dates);
     const values = await this.getValues(convertMessage);
     const banks = await this.getBanks(convertBank);
     const relationship: inputRelate = { values, banks, dates };

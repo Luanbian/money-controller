@@ -40,5 +40,5 @@ export interface IGmailController {
 }
 
 export interface IGmailGateway {
-  getAttributes(auth: string): Promise<Attributestype>;
+  getTransaction(auth: string): Promise<Attributestype>;
 }
