@@ -1,8 +1,13 @@
 export interface Attributestype {
   messages: string[],
-  banks: string[],
-  dates:string[]
+  banks: ResponseType,
+  dates: ResponseType
 }
+
+export type ResponseType = {
+  headers?: string | null | undefined; 
+  identify?: string | null | undefined
+}[]
 
 export interface outputRelate {
   id: string,

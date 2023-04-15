@@ -1,7 +1,6 @@
 import { htmlToText } from 'html-to-text';
-import { GoogleAdapter, IGmailGateway } from '../interfaces/interfaces';
+import { GoogleAdapter, IGmailGateway, ResponseType } from '../interfaces/interfaces';
 
-type SubjectType = {headers?: string | null | undefined; identify?: string | null | undefined}[]
 
 export class GmailGateway implements IGmailGateway {
   constructor(private readonly google: GoogleAdapter) {}
@@ -20,7 +19,7 @@ export class GmailGateway implements IGmailGateway {
     return messageIds;
   }
 
-  private async getHeader(auth: string, ids: string[], headerName: string): Promise<SubjectType> {
+  private async getHeader(auth: string, ids: string[], headerName: string): Promise<ResponseType> {
     const gmail = this.google.gmail({version: 'v1', auth});
     const promises = ids.map(id => {
       return gmail.users.messages.get({
@@ -29,7 +28,7 @@ export class GmailGateway implements IGmailGateway {
       });
     });
     const result = await Promise.all(promises);
-    const output: SubjectType = [];
+    const output: ResponseType = [];
     result.forEach(res => {
       const headers = res.data.payload?.headers?.find((header) => header.name === headerName)?.value
       const identify = res.data.id; 
@@ -38,8 +37,8 @@ export class GmailGateway implements IGmailGateway {
     return output;
   }
 
-  private async getSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
-    const subject: SubjectType = []
+  private async getSubjects(auth: string, messageIds: string[]): Promise<ResponseType> {
+    const subject: ResponseType = []
     const listsubjects = await this.getHeader(auth, messageIds, 'Subject');
     listsubjects.map(item => {
       if(item.headers?.toLowerCase().includes('pix')) subject.push(item);
@@ -47,21 +46,21 @@ export class GmailGateway implements IGmailGateway {
     return subject;
   }
 
-  private async getBank(auth: string, subjects: SubjectType): Promise<SubjectType> {
+  private async getBank(auth: string, subjects: ResponseType): Promise<ResponseType> {
     const ids: string[] = []
     subjects.map(item => {ids.push(item.identify!)});
     const listBank = await this.getHeader(auth, ids, 'From');
     return listBank;
   }
 
-  private async getDates(auth: string, subjects: SubjectType): Promise<SubjectType> {
+  private async getDates(auth: string, subjects: ResponseType): Promise<ResponseType> {
     const ids: string[] = []
     subjects.map(item => {ids.push(item.identify!)});
     const listDates = await this.getHeader(auth, ids, 'Date');
     return listDates;
   }
 
-  private async getMessages(auth: string, subjects: SubjectType): Promise<string[]> {
+  private async getMessages(auth: string, subjects: ResponseType): Promise<string[]> {
     const filteredIds: string[] = [];
     subjects.map(item => filteredIds.push(item.identify!))
     const gmail = this.google.gmail({ version: 'v1', auth });
