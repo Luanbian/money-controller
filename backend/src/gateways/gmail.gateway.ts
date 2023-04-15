@@ -54,13 +54,11 @@ export class GmailGateway implements IGmailGateway {
     return listBank;
   }
 
-  private async getDates(auth: string, filteredIds: string[]): Promise<string[]> {
-    const dates: string[] = [];
-    for (const id of filteredIds) {
-      const date = await this.getHeader(auth, id, 'Date');
-      if (date) dates.push(date);
-    }
-    return dates;
+  private async getDates(auth: string, subjects: SubjectType): Promise<SubjectType> {
+    const ids: string[] = []
+    subjects.map(item => {ids.push(item.identify!)});
+    const listDates = await this.getHeader(auth, ids, 'Date');
+    return listDates;
   }
 
   private async listMessages(auth: string, filteredIds: string[]): Promise<string[]> {
@@ -88,8 +86,8 @@ export class GmailGateway implements IGmailGateway {
     const messageIds = await this.getMessageIds(auth);
     const subjects = await this.getSubjects(auth, messageIds);
     const banks = await this.getBank(auth, subjects);
-    const messages = await this.listMessages(auth, subjects);
     const dates = await this.getDates(auth, subjects);
+    const messages = await this.listMessages(auth, subjects);
     return {
       banks,
       messages,
