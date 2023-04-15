@@ -1,7 +1,7 @@
 import { htmlToText } from 'html-to-text';
 import { GoogleAdapter, IGmailGateway } from '../interfaces/interfaces';
 
-type SubjectType = {headers?: string | null | undefined; id?: string | null | undefined}
+type SubjectType = {headers?: string | null | undefined; identify?: string | null | undefined}[]
 
 export class GmailGateway implements IGmailGateway {
   constructor(private readonly google: GoogleAdapter) {}
@@ -20,30 +20,31 @@ export class GmailGateway implements IGmailGateway {
     return messageIds;
   }
 
-  private async getHeader(auth: string, id: string, headerName: string): Promise<string | undefined | SubjectType> {
+  private async getHeader(auth: string, ids: string[], headerName: string): Promise<SubjectType> {
     const gmail = this.google.gmail({version: 'v1', auth});
-    const res = await gmail.users.messages.get({
-      userId: 'me',
-      id: id
+    const promises = ids.map(id => {
+      return gmail.users.messages.get({
+        userId: 'me',
+        id: id
+      });
     });
-    if( headerName == 'Subject') {
-      const headers = res.data.payload?.headers?.filter((header) => header.name === 'Subject')[0].value
-      const id = res.data.id;
-      return { headers, id };
-    } else {
-      const header = res.data.payload.headers?.find((header) => header.name === headerName)?.value;
-      if (header) return header;
-    }
+    const result = await Promise.all(promises);
+    const output: SubjectType = [];
+    result.forEach(res => {
+      const headers = res.data.payload?.headers?.find((header) => header.name === headerName)?.value
+      const identify = res.data.id; 
+      output.push({ headers, identify });
+    });
+    return output;
   }
 
-  private async getSubjects(auth: string, messageIds: string[]): Promise<string[]> {
-    const subjects: string[] = [];
-    for(const id of messageIds) {
-      const subject: SubjectType = await this.getHeader(auth, id, 'Subject')
-      if (subject.headers?.toLowerCase().includes('pix')) subjects.push(subject.id!);
-    }
-    console.log(subjects)
-    return subjects;
+  private async getSubjects(auth: string, messageIds: string[]): Promise<SubjectType> {
+    const subject: SubjectType = []
+    const listsubjects = await this.getHeader(auth, messageIds, 'Subject');
+    listsubjects.map(item => {
+      if(item.headers?.toLowerCase().includes('pix')) subject.push(item);
+    })
+    return subject;
   }
 
   private async getBank(auth: string, filteredIds: string[]): Promise<string[]> {
