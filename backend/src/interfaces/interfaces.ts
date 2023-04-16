@@ -1,12 +1,19 @@
 export interface Attributestype {
-  messages: string[],
-  banks: ResponseType,
-  dates: ResponseType
+  subjects: string[];
+  banks: string[];
+  dates: string[];
+  bodies: string[];
 }
 
 export type ResponseType = {
-  headers?: string | null | undefined; 
-  identify?: string | null | undefined
+  headers: { 
+    name?: string | null | undefined; 
+    value?: string | null | undefined; 
+  }[] | null | undefined;
+  id: string;
+  body: {
+    data: string
+  }
 }[]
 
 export interface outputRelate {
@@ -30,7 +37,7 @@ interface GmailGetMethod {
 export interface GoogleGmailAdapter {
   users: {
     messages: {
-      get(props: { userId: string; id: string}): Promise<GmailGetMethod>;
+      get(props: { userId: string; id: string, format: string}): Promise<GmailGetMethod>;
       list(props: {userId: string; q: string}): Promise<{data: {messages: { id: string }[]}}>;
     }
   }
