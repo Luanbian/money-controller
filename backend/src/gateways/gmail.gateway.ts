@@ -39,7 +39,12 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private async getSubjects(messages: ResponseType): Promise<string[]> {
-    return await this.getHeader(messages, 'Subject');
+    const subjects: string[] = [];
+    const listSubject = await this.getHeader(messages, 'Subject');
+    listSubject.forEach(item => {
+      if(item.toLowerCase().includes('pix')) subjects.push(item);
+    })
+    return subjects;
   }
 
   private async getBank(messages: ResponseType): Promise<string[]> {
