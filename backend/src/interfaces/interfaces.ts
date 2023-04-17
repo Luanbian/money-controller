@@ -1,9 +1,15 @@
 export interface Attributestype {
-  subjects: string[];
   banks: string[];
   dates: string[];
   bodies: string[];
 }
+
+export type HeaderType = {
+  header?: string,
+  date?: string,
+  bank?: string,
+  body?: string
+}[]
 
 export type ResponseType = {
   headers: { 
