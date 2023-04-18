@@ -92,8 +92,8 @@ export class GmailGateway implements IGmailGateway {
       const month = String(dataObj.getMonth() + 1).padStart(2, '0');
       const year = dataObj.getFullYear();
       const hour = String(dataObj.getHours()).padStart(2, '0');
-      const minuto = String(dataObj.getMinutes()).padStart(2, '0');
-      return `${day}/${month}/${year} ${hour}:${minuto}`;
+      const minute = String(dataObj.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hour}:${minute}`;
     };
     const dates = date.map((data) => formatDateHour(data));
     return dates;
@@ -134,14 +134,14 @@ export class GmailGateway implements IGmailGateway {
   }
 
   async getTransaction(auth: string) {
-  const messages = await this.getMessage(auth);
-  const subjects = await this.getSubjects(messages);
-  const [banks, dates, bodies] = await Promise.all([
-    this.getBank(subjects),
-    this.getDate(subjects),
-    this.getBody(subjects),
-  ]);
-  return { banks, dates, bodies };
-}
+    const messages = await this.getMessage(auth);
+    const subjects = await this.getSubjects(messages);
+    const [banks, dates, bodies] = await Promise.all([
+      this.getBank(subjects),
+      this.getDate(subjects),
+      this.getBody(subjects),
+    ]);
+    return { banks, dates, bodies };
+  }
 
 }
