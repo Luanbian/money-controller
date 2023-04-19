@@ -61,26 +61,11 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private getValue(message: EmailType): string {
-    //refatorar arrays desnecessárias
     const body = message.body.data;
     const decoded = Buffer.from(body, 'base64').toString();
     const readable = htmlToText(decoded);
-    const element = readable.replace(/\n/g, ' ').split(' ');
-    const keyWord = 'R$';
-    const nextItem = 1;
-    const valueIndex: number[] = [];
-    const values: string[] = [];
-    if (element) {
-      for (let i = 0; i < element.length; i++) {
-        if (element[i] === keyWord) {
-          valueIndex.push(i + nextItem);
-        }
-      }
-      for (let i = 0; i < valueIndex.length; i++) {
-        values.push(element[valueIndex[i]]);
-      }
-    }
-    return values[0];
+    const value = readable.match(/\d{1,3}(?:\.\d{3})*(?:,\d{2})/g)?.[0];
+    return value!;
   }
 
   async getTransaction(auth: string) {
