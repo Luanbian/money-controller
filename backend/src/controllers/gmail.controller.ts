@@ -1,6 +1,5 @@
 import { Attributestype, IGmailController, IGmailGateway, outputRelate } from '../interfaces/interfaces';
 import { authorize } from '../..';
-import { v4 } from 'uuid';
 
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
@@ -16,6 +15,6 @@ export class GmailController implements IGmailController {
   }
 
   async getTransaction(): Promise<Attributestype[]> {
-    return this.setTransaction();
+    return await this.setTransaction();
   }
 }

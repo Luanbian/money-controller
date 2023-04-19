@@ -54,6 +54,9 @@ export class GmailGateway implements IGmailGateway {
 
   private getValue(message: EmailType): number {
     const body = message.body.data;
+    if (!body) { 
+      throw new Error('No body found')
+    }
     const decoded = Buffer.from(body, 'base64').toString();
     const readable = htmlToText(decoded);
     const value = readable.match(/\d{1,3}(?:\.\d{3})*(?:,\d{2})/g)?.[0];
@@ -72,5 +75,4 @@ export class GmailGateway implements IGmailGateway {
       }
     })
   }
-
 }
