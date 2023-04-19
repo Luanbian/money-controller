@@ -1,6 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { View } from 'react-native';
+import { Todolist } from '../components/todolist';
+import { styles } from '../styles/home.styled';
 
 export default function Expenses() {
-  return <Text>Despesas fixas</Text>;
+  return (
+    <View style={styles.container}>
+      <Todolist />
+    </View>
+  );
 }
