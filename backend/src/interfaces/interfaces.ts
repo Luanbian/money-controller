@@ -4,14 +4,7 @@ export interface Attributestype {
   value: string;
 }
 
-export type HeaderType = {
-  header?: string,
-  date?: string,
-  bank?: string,
-  body?: string
-}[]
-
-export type ResponseType = {
+export type EmailType = {
   headers: { 
     name?: string | null | undefined; 
     value?: string | null | undefined; 

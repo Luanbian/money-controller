@@ -1,10 +1,10 @@
 import { htmlToText } from 'html-to-text';
-import { GoogleAdapter, HeaderType, IGmailGateway, ResponseType } from '../interfaces/interfaces';
+import { GoogleAdapter, IGmailGateway, EmailType } from '../interfaces/interfaces';
 
 export class GmailGateway implements IGmailGateway {
   constructor(private readonly google: GoogleAdapter) {}
 
-  private async getMessage(auth: string): Promise<ResponseType[]> {
+  private async getMessage(auth: string): Promise<EmailType[]> {
     const gmail = this.google.gmail({ version: 'v1', auth });
     const { data: { messages } } = await gmail.users.messages.list({
       userId: 'me',
@@ -28,11 +28,11 @@ export class GmailGateway implements IGmailGateway {
     }));
   }
 
-  private getHeader(message: ResponseType, headerName: string) {
+  private getHeader(message: EmailType, headerName: string) {
     return message.headers?.find((header) => header.name === headerName)?.value;
   }
 
-  private filterByKeyword(messages: ResponseType[]): ResponseType[] {
+  private filterByKeyword(messages: EmailType[]): EmailType[] {
     const keyWords: string[] = ['pix']
     return messages.filter((message) => keyWords.some(keyword => {
       const subject = this.getHeader(message, 'Subject');
@@ -40,12 +40,12 @@ export class GmailGateway implements IGmailGateway {
     }));
   }
 
-  private getBank(message: ResponseType): string {
+  private getBank(message: EmailType): string {
     const from = this.getHeader(message, 'From');
     return from!.replace(/(^.*@)(.*)(\.com)(.*$)/, '$2');
   }
 
-  private getDate(message: ResponseType): string {
+  private getDate(message: EmailType): string {
     // refatorar com date-fns 
     const date = this.getHeader(message, 'Date');
     const formatDateHour = (data: string): string => {
@@ -60,7 +60,7 @@ export class GmailGateway implements IGmailGateway {
     return formatDateHour(date!)
   }
 
-  private getValue(message: ResponseType): string {
+  private getValue(message: EmailType): string {
     //refatorar arrays desnecessárias
     const body = message.body.data;
     const decoded = Buffer.from(body, 'base64').toString();
