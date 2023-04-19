@@ -1,7 +1,7 @@
 export interface Attributestype {
   bank: string;
   date: string;
-  value: string;
+  value: number;
 }
 
 export type EmailType = {

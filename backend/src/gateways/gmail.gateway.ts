@@ -52,12 +52,13 @@ export class GmailGateway implements IGmailGateway {
     return formattedDate!
   }
 
-  private getValue(message: EmailType): string {
+  private getValue(message: EmailType): number {
     const body = message.body.data;
     const decoded = Buffer.from(body, 'base64').toString();
     const readable = htmlToText(decoded);
     const value = readable.match(/\d{1,3}(?:\.\d{3})*(?:,\d{2})/g)?.[0];
-    return value!;
+    const floatValue = parseFloat(parseFloat(value!.replace(',', '.')).toFixed(2));
+    return floatValue;
   }
 
   async getTransaction(auth: string) {
