@@ -1,11 +1,10 @@
 import { htmlToText } from 'html-to-text';
 import { GoogleAdapter, HeaderType, IGmailGateway, ResponseType } from '../interfaces/interfaces';
 
-
 export class GmailGateway implements IGmailGateway {
   constructor(private readonly google: GoogleAdapter) {}
 
-  private async getMessage(auth: string): Promise<ResponseType> {
+  private async getMessage(auth: string): Promise<ResponseType[]> {
     const gmail = this.google.gmail({ version: 'v1', auth });
     const { data: { messages } } = await gmail.users.messages.list({
       userId: 'me',
@@ -29,63 +28,26 @@ export class GmailGateway implements IGmailGateway {
     }));
   }
 
-  private async getHeader(messages: ResponseType, headerName: string): Promise<HeaderType> {
-    const headers: HeaderType = [];
-    messages.map(item => {
-      const header = item.headers?.find((header) => header.name === headerName)?.value;
-      const date = item.headers?.find((header) => header.name === 'Date')?.value;
-      const bank = item.headers?.find((header) => header.name === 'From')?.value;
-      const body = item.body.data;
-      if(header && date && bank) headers.push({header, date, bank, body});
-    })
-    return headers;
+  private getHeader(message: ResponseType, headerName: string) {
+    return message.headers?.find((header) => header.name === headerName)?.value;
   }
 
-  private async getSubjects(messages: ResponseType): Promise<HeaderType> {
-    const subjects: HeaderType = [];
+  private filterByKeyword(messages: ResponseType[]): ResponseType[] {
     const keyWords: string[] = ['pix']
-    const listSubject = await this.getHeader(messages, 'Subject');
-    listSubject.forEach(item => {
-      if(keyWords.some(subject => item.header?.toLowerCase().includes(subject))) {
-        subjects.push(item);
-      }
-    })
-    return subjects;
+    return messages.filter((message) => keyWords.some(keyword => {
+      const subject = this.getHeader(message, 'Subject');
+      return subject?.toLowerCase().includes(keyword);
+    }));
   }
 
-  private async getBank(subjects: HeaderType): Promise<string[]> {
-    const listbanks: string[] = [];
-    subjects.map(item => {
-      if(item.bank) listbanks.push(item.bank);
-    })
-    const cleanListBank: string[][] = [];
-    listbanks.map(item => {
-      const element = item.replace('.com', ' ').replace('@', ' ').replace('>', '').split(' ');
-      cleanListBank.push(element);
-    })
-    const bankArray = cleanListBank.flat();
-    const keyWord = '.br';
-    const previousItem = 1;
-    const valueIndex: number[] = [];
-    const banks: string[] = [];
-    if (bankArray) {
-      for(let i = 0; i < bankArray.length; i++) {
-        if(bankArray[i] === keyWord) {
-          valueIndex.push(i - previousItem);
-        }
-      }
-      for(let i = 0; i < valueIndex.length; i++) {
-        banks.push(bankArray[valueIndex[i]]);
-      }
-    }
-    return banks
+  private getBank(message: ResponseType): string {
+    const from = this.getHeader(message, 'From');
+    return from!.replace(/(^.*@)(.*)(\.com)(.*$)/, '$2');
   }
 
-  private async getDate(subjects: HeaderType): Promise<string[]> {
-    const date: string[] = [];
-    subjects.map(item => {
-      date.push(item.date!);
-    })
+  private getDate(message: ResponseType): string {
+    // refatorar com date-fns 
+    const date = this.getHeader(message, 'Date');
     const formatDateHour = (data: string): string => {
       const dataObj = new Date(data);
       const day = String(dataObj.getDate()).padStart(2, '0');
@@ -94,54 +56,43 @@ export class GmailGateway implements IGmailGateway {
       const hour = String(dataObj.getHours()).padStart(2, '0');
       const minute = String(dataObj.getMinutes()).padStart(2, '0');
       return `${day}/${month}/${year} ${hour}:${minute}`;
-    };
-    const dates = date.map((data) => formatDateHour(data));
-    return dates;
+    }
+    return formatDateHour(date!)
   }
 
-  private async getBody(subjects: HeaderType): Promise<string[]> {
-    const bodies: string[] = []
-    subjects.map(item => {
-      if(item.body) bodies.push(item.body);
-    })
-    const email: string[] =[]
-    bodies.map(item => {
-      const decoded = Buffer.from(item, 'base64').toString();
-      const readable = htmlToText(decoded);
-      email.push(readable);
-    })
-    const cleanEmail: string[][] = [];
-    email.map(item => {
-      const element = item.replace(/\n/g, ' ').split(' ');
-      cleanEmail.push(element);
-    })
-    const messageArray = cleanEmail.flat();
+  private getValue(message: ResponseType): string {
+    //refatorar arrays desnecessárias
+    const body = message.body.data;
+    const decoded = Buffer.from(body, 'base64').toString();
+    const readable = htmlToText(decoded);
+    const element = readable.replace(/\n/g, ' ').split(' ');
     const keyWord = 'R$';
     const nextItem = 1;
     const valueIndex: number[] = [];
     const values: string[] = [];
-    if (messageArray) {
-      for (let i = 0; i < messageArray.length; i++) {
-        if (messageArray[i] === keyWord) {
+    if (element) {
+      for (let i = 0; i < element.length; i++) {
+        if (element[i] === keyWord) {
           valueIndex.push(i + nextItem);
         }
       }
       for (let i = 0; i < valueIndex.length; i++) {
-        values.push(messageArray[valueIndex[i]]);
+        values.push(element[valueIndex[i]]);
       }
     }
-    return values;
+    return values[0];
   }
 
   async getTransaction(auth: string) {
     const messages = await this.getMessage(auth);
-    const subjects = await this.getSubjects(messages);
-    const [banks, dates, bodies] = await Promise.all([
-      this.getBank(subjects),
-      this.getDate(subjects),
-      this.getBody(subjects),
-    ]);
-    return { banks, dates, bodies };
+    const filteredMessages = this.filterByKeyword(messages);
+    return filteredMessages.map((message) => {
+      return {
+        bank: this.getBank(message),
+        date: this.getDate(message),
+        value: this.getValue(message)
+      }
+    })
   }
 
 }

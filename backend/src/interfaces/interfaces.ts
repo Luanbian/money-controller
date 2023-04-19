@@ -1,7 +1,7 @@
 export interface Attributestype {
-  banks: string[];
-  dates: string[];
-  bodies: string[];
+  bank: string;
+  date: string;
+  value: string;
 }
 
 export type HeaderType = {
@@ -20,7 +20,7 @@ export type ResponseType = {
   body: {
     data: string
   }
-}[]
+}
 
 export interface outputRelate {
   id: string,
@@ -58,5 +58,5 @@ export interface IGmailController {
 }
 
 export interface IGmailGateway {
-  getTransaction(auth: string): Promise<Attributestype>;
+  getTransaction(auth: string): Promise<Attributestype[]>
 }
