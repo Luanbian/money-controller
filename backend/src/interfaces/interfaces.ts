@@ -47,7 +47,7 @@ export interface GoogleAdapter {
 }
 
 export interface IGmailController {
-  getAttributes(): Promise<Attributestype[]>
+  getTransaction(): Promise<Attributestype[]>
 }
 
 export interface IGmailGateway {

@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  private async setAttributes(): Promise<Attributestype[]> {
+  private async setTransaction(): Promise<Attributestype[]> {
     try {
       const auth = await authorize()
       const transaction = await this.gmailGateway.getTransaction(auth);
@@ -15,7 +15,7 @@ export class GmailController implements IGmailController {
     }
   }
 
-  async getAttributes(): Promise<Attributestype[]> {
-    return this.setAttributes();
+  async getTransaction(): Promise<Attributestype[]> {
+    return this.setTransaction();
   }
 }
