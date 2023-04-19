@@ -11,7 +11,7 @@ type inputRelate = {
 export class GmailController implements IGmailController {
   constructor(private readonly gmailGateway: IGmailGateway) {}
 
-  private async setAttributes(): Promise<Attributestype> {
+  private async setAttributes(): Promise<Attributestype[]> {
     try {
       const auth = await authorize()
       const transaction = await this.gmailGateway.getTransaction(auth);
@@ -107,15 +107,7 @@ export class GmailController implements IGmailController {
     return relate;
   }
 
-  async getAttributes() {
-    const transaction = await this.setAttributes();
-    const convertMessage = await this.convertMessageToArray(transaction.messages);
-    const convertBank = await this.convertBankToArray(transaction.banks);
-    const dates = await this.getDates(transaction.dates);
-    const values = await this.getValues(convertMessage);
-    const banks = await this.getBanks(convertBank);
-    const relationship: inputRelate = { values, banks, dates };
-    const relate = await this.relatingDatas(relationship);
-    return relate;
+  async getAttributes(): Promise<Attributestype[]> {
+    return this.setAttributes();
   }
 }

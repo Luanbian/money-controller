@@ -17,9 +17,9 @@ export type EmailType = {
 
 export interface outputRelate {
   id: string,
-  value: number,
   bank: string,
   date: string
+  value: number,
 }
 
 interface GmailGetMethod {
@@ -47,7 +47,7 @@ export interface GoogleAdapter {
 }
 
 export interface IGmailController {
-  getAttributes(): Promise<outputRelate[]>
+  getAttributes(): Promise<Attributestype[]>
 }
 
 export interface IGmailGateway {
