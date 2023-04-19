@@ -1,4 +1,5 @@
 import { htmlToText } from 'html-to-text';
+import { format } from 'date-fns';
 import { GoogleAdapter, IGmailGateway, EmailType } from '../interfaces/interfaces';
 
 export class GmailGateway implements IGmailGateway {
@@ -46,18 +47,9 @@ export class GmailGateway implements IGmailGateway {
   }
 
   private getDate(message: EmailType): string {
-    // refatorar com date-fns 
-    const date = this.getHeader(message, 'Date');
-    const formatDateHour = (data: string): string => {
-      const dataObj = new Date(data);
-      const day = String(dataObj.getDate()).padStart(2, '0');
-      const month = String(dataObj.getMonth() + 1).padStart(2, '0');
-      const year = dataObj.getFullYear();
-      const hour = String(dataObj.getHours()).padStart(2, '0');
-      const minute = String(dataObj.getMinutes()).padStart(2, '0');
-      return `${day}/${month}/${year} ${hour}:${minute}`;
-    }
-    return formatDateHour(date!)
+    const date = new Date(this.getHeader(message, 'Date')!);
+    const formattedDate = format(date, 'dd/MM/yyyy HH:mm');
+    return formattedDate!
   }
 
   private getValue(message: EmailType): string {
