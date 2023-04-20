@@ -1,4 +1,4 @@
-import { Attributestype, IGmailController, IGmailGateway, outputRelate } from '../interfaces/interfaces';
+import { Attributestype, IGmailController, IGmailGateway } from '../interfaces/interfaces';
 import { authorize } from '../..';
 
 export class GmailController implements IGmailController {

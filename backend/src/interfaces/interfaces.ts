@@ -15,13 +15,6 @@ export type EmailType = {
   }
 }
 
-export interface outputRelate {
-  id: string,
-  bank: string,
-  date: string
-  value: number,
-}
-
 interface GmailGetMethod {
   data: {
     payload: {
