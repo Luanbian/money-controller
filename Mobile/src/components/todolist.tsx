@@ -15,8 +15,8 @@ export const Todolist = () => {
 
   const handleAddObject = () => {
     if (inputText.length < 3) return;
-    const newObject: MyObject = { text: inputText, value: inputNumber };
-    setObjectArray([...objectArray, newObject]);
+    const expense: MyObject = { text: inputText, value: inputNumber };
+    setObjectArray([...objectArray, expense]);
     setInputText('');
     setInputNumber('');
     setPopUp(false);
