@@ -65,3 +65,7 @@ export interface IGmailController {
 export interface IGmailGateway {
   getTransaction(auth: string): Promise<Attributestype[]>
 }
+
+export interface IExpenseDatabase {
+  newExpense({ text, value }: IinputNewExpense): Promise<number[] | undefined>;
+}
