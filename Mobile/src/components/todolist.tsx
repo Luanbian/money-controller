@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
@@ -21,6 +21,17 @@ export const Todolist = () => {
   const [inputExpense, setInputExpense] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
+
+  useEffect(() => {
+    axios
+      .get(`${baseURL}/expense`)
+      .then((response) => {
+        setListExpenses(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const handleAddObject = () => {
     if (inputExpense.length < 3) return;
@@ -56,12 +67,13 @@ export const Todolist = () => {
         </View>
       )}
       {!popUp && <Button title="+" onPress={() => setPopUp(true)} />}
-      {listExpenses.map((object, index) => (
-        <View key={index}>
-          <Text>{object.expense}</Text>
-          <Text>{object.value}</Text>
-        </View>
-      ))}
+      {listExpenses &&
+        listExpenses.map((object) => (
+          <View key={object.id.toString()}>
+            <Text>{object.expense}</Text>
+            <Text>{object.value}</Text>
+          </View>
+        ))}
     </View>
   );
 };
