@@ -9,7 +9,10 @@ const expenseController = makeExpenseController();
 const ExpenseSchema = z.object({
     expense: z.string(),
     value: z.number()
-})
+});
+const IdSchema = z.object({
+    id: z.string(),
+});
 
 router.get('/history', async (req, res) => {
     const result = await gmailController.getTransaction();
@@ -23,5 +26,11 @@ router.post('/expense', async (req, res) => {
 })
 router.get('/expense', async (req, res) => {
     const result = await expenseController.expenses();
+    res.json(result);
+})
+router.put('/expense/:id', async (req, res) => {
+    const id = IdSchema.parse(req.params).id;
+    const expense = ExpenseSchema.parse(req.body);
+    const result = await expenseController.updateExpense(id, expense);
     res.json(result);
 })

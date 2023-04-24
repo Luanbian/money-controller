@@ -23,4 +23,17 @@ export class ExpenseController implements IExpenseController {
             data: listExpenses
         }
     }
+
+    async updateExpense(id: string, expense: IinputNewExpense): Promise<IHttpsResponse> {
+        const expenses = await this.expenseDatabase.updateExpense({
+            id,
+            expense: expense.expense,
+            value: expense.value
+        })
+        return {
+            statusCode: 200,
+            message: 'updated',
+            data: expenses
+        }
+    }
 }
