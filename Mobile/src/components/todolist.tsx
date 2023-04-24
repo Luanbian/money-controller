@@ -1,10 +1,12 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
+import { baseURL } from '../api/api';
 
 interface MyObject {
-  text: string;
-  value: number | string;
+  expense: string;
+  value: number;
 }
 
 export const Todolist = () => {
@@ -15,8 +17,11 @@ export const Todolist = () => {
 
   const handleAddObject = () => {
     if (inputText.length < 3) return;
-    const expense: MyObject = { text: inputText, value: inputNumber };
+    const expense: MyObject = { expense: inputText, value: Number(inputNumber) };
     setObjectArray([...objectArray, expense]);
+
+    axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
+
     setInputText('');
     setInputNumber('');
     setPopUp(false);
@@ -34,7 +39,7 @@ export const Todolist = () => {
             type={'money'}
             options={{
               precision: 2,
-              separator: ',',
+              separator: '.',
               delimiter: '.',
               unit: '',
               suffixUnit: '',
@@ -47,7 +52,7 @@ export const Todolist = () => {
       {!popUp && <Button title="+" onPress={() => setPopUp(true)} />}
       {objectArray.map((object, index) => (
         <View key={index}>
-          <Text>{object.text}</Text>
+          <Text>{object.expense}</Text>
           <Text>{object.value}</Text>
         </View>
       ))}
