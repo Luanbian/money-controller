@@ -100,8 +100,7 @@ export const Todolist = () => {
               title="Atualizar Despesa"
               onPress={() => {
                 setPopUp(true);
-                const id = object.id;
-                setSelectedExpense(id);
+                setSelectedExpense(object.id);
               }}
             />
             <Button title="Deletar Despesa" onPress={() => setConfirmDelete(true)} />
