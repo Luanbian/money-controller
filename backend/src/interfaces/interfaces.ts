@@ -75,10 +75,12 @@ export interface IExpenseController {
   newExpense(expense: IinputNewExpense): Promise<IHttpsResponse>;
   expenses(): Promise<IHttpsResponse>;
   updateExpense(id: string, expense: IinputNewExpense): Promise<IHttpsResponse>;
+  deleteExpense(id: string): Promise<IHttpsResponse>;
 }
 
 export interface IExpenseDatabase {
   newExpense({ expense, value }: IinputNewExpense): Promise<number[] | undefined>;
   expenses(): Promise<IExpenseOutput | undefined>;
   updateExpense({id, expense, value}: IinputUpdateExpense): Promise<number | undefined>;
+  deleteExpense(id: string): Promise<number | undefined>;
 }

@@ -16,11 +16,11 @@ export class ExpenseController implements IExpenseController {
     }
 
     async expenses(): Promise<IHttpsResponse> {
-        const listExpenses = await this.expenseDatabase.expenses();
+        const expenses = await this.expenseDatabase.expenses();
         return {
             statusCode: 200,
             message: 'Ok',
-            data: listExpenses
+            data: expenses
         }
     }
 
@@ -33,6 +33,15 @@ export class ExpenseController implements IExpenseController {
         return {
             statusCode: 200,
             message: 'updated',
+            data: expenses
+        }
+    }
+
+    async deleteExpense(id: string): Promise<IHttpsResponse> {
+        const expenses = await this.expenseDatabase.deleteExpense(id);
+        return {
+            statusCode: 200,
+            message: 'deleted',
             data: expenses
         }
     }

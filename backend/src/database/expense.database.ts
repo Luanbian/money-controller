@@ -32,4 +32,13 @@ export class ExpenseDatabase implements IExpenseDatabase {
             Promise.reject(new Error(error));
         }
     }
+
+    async deleteExpense(id: string): Promise<number | undefined> {
+        try {
+            const result = await knex('expenses').delete().where('id', id);
+            return result;
+        } catch (error) {
+            Promise.reject(new Error(error));
+        }
+    }
 }
