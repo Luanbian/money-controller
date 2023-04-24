@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text, Modal } from 'react-native';
+import { styles } from '../styles/todolist.styled';
 import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
 
@@ -63,7 +64,7 @@ export const Todolist = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       {popUp && (
         <>
           <>
@@ -84,9 +85,15 @@ export const Todolist = () => {
             />
           </>
           {!selectedExpense ? (
-            <Button title="Adicionar Despesa" onPress={handleNewExpense} />
+            <>
+              <Button title="Adicionar Despesa" onPress={handleNewExpense} />
+              <Button title="voltar" onPress={() => setPopUp(false)} />
+            </>
           ) : (
-            <Button title="Atualizar Despesa" onPress={() => handleUpdateExpense(selectedExpense)} />
+            <>
+              <Button title="Atualizar Despesa" onPress={() => handleUpdateExpense(selectedExpense)} />
+              <Button title="voltar" onPress={() => setPopUp(false)} />
+            </>
           )}
         </>
       )}
