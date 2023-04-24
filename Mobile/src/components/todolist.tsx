@@ -106,7 +106,12 @@ export const Todolist = () => {
         </>
       )}
       {!popUp && (
-        <Pressable onPress={() => setPopUp(true)}>
+        <Pressable
+          onPress={() => {
+            setPopUp(true);
+            setSelectedExpense(null);
+          }}
+        >
           <Text>+</Text>
         </Pressable>
       )}
