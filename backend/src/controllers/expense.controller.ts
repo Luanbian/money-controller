@@ -1,13 +1,17 @@
-import { IExpenseController, IExpenseOutput, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
+import { IExpenseController, IExpenseDatabase, IExpenseOutput, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
 
 export class ExpenseController implements IExpenseController {
+    constructor(private readonly expenseDatabase: IExpenseDatabase) {}
+
     async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse<IExpenseOutput>> {
-        const expenses = expense;
-        console.log(expenses);
+        const expenses = await this.expenseDatabase.newExpense({
+            text: expense.text,
+            value: expense.value
+        })
         return {
             statusCode: 201,
             message: 'created',
-            data: { id: 1 }
+            data: { id: expenses }
         }
     }
 }

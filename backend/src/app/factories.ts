@@ -3,6 +3,7 @@ import { GmailController } from '../controllers/gmail.controller';
 import { google } from 'googleapis';
 import { GoogleAdapter, GoogleGmailAdapter } from '../interfaces/interfaces';
 import { ExpenseController } from '../controllers/expense.controller';
+import { ExpenseDatabase } from '../database/expense.database';
 
 export const makeGmailGateway = () => {
   const adapterGoogle: GoogleAdapter = {
@@ -26,6 +27,11 @@ export const makeGmailController = () => {
   return new GmailController(gmailGateway);
 };
 
+export const makeExpenseDatabase = () => {
+  return new ExpenseDatabase();
+};
+
 export const makeExpenseController = () => {
-  return new ExpenseController();
-}
+  const expenseDatabase = makeExpenseDatabase();
+  return new ExpenseController(expenseDatabase);
+};
