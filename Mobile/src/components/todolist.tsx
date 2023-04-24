@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, Modal } from 'react-native';
+import { View, TextInput, Pressable, Text, Modal } from 'react-native';
 import { styles } from '../styles/todolist.styled';
 import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
@@ -86,36 +86,55 @@ export const Todolist = () => {
           </>
           {!selectedExpense ? (
             <>
-              <Button title="Adicionar Despesa" onPress={handleNewExpense} />
-              <Button title="voltar" onPress={() => setPopUp(false)} />
+              <Pressable onPress={handleNewExpense}>
+                <Text>Adicionar despesa</Text>
+              </Pressable>
+              <Pressable onPress={() => setPopUp(false)}>
+                <Text>Voltar</Text>
+              </Pressable>
             </>
           ) : (
             <>
-              <Button title="Atualizar Despesa" onPress={() => handleUpdateExpense(selectedExpense)} />
-              <Button title="voltar" onPress={() => setPopUp(false)} />
+              <Pressable onPress={() => handleUpdateExpense(selectedExpense)}>
+                <Text>Atualizar despesa</Text>
+              </Pressable>
+              <Pressable onPress={() => setPopUp(false)}>
+                <Text>Voltar</Text>
+              </Pressable>
             </>
           )}
         </>
       )}
-      {!popUp && <Button title="+" onPress={() => setPopUp(true)} />}
+      {!popUp && (
+        <Pressable onPress={() => setPopUp(true)}>
+          <Text>+</Text>
+        </Pressable>
+      )}
       {listExpenses &&
         listExpenses.map((object) => (
           <View key={object.id.toString()}>
             <Text>{object.expense}</Text>
             <Text>{object.value}</Text>
-            <Button
-              title="Atualizar Despesa"
+            <Pressable
               onPress={() => {
                 setPopUp(true);
                 setSelectedExpense(object.id);
               }}
-            />
-            <Button title="Deletar Despesa" onPress={() => setConfirmDelete(true)} />
+            >
+              <Text>Atualizar despesa</Text>
+            </Pressable>
+            <Pressable onPress={() => setConfirmDelete(true)}>
+              <Text>Deletar despesa</Text>
+            </Pressable>
             <Modal animationType="slide" transparent={true} visible={confirmDelete}>
               <View>
                 <Text>Deseja realmente excluir esta despesa?</Text>
-                <Button title="Deletar" onPress={() => handleDeleteExpense(object.id)} />
-                <Button title="Cancelar" onPress={() => setConfirmDelete(false)} />
+                <Pressable onPress={() => handleDeleteExpense(object.id)}>
+                  <Text>Deletar</Text>
+                </Pressable>
+                <Pressable onPress={() => setConfirmDelete(false)}>
+                  <Text>Cancelar</Text>
+                </Pressable>
               </View>
             </Modal>
           </View>
