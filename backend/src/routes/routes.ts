@@ -7,7 +7,7 @@ const gmailController = makeGmailController();
 const expenseController = makeExpenseController();
 
 const ExpenseSchema = z.object({
-    text: z.string(),
+    expense: z.string(),
     value: z.number()
 })
 

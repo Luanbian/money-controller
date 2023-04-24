@@ -40,7 +40,7 @@ export interface GoogleAdapter {
 }
 
 export interface IinputNewExpense {
-  text: string,
+  expense: string,
   value: number
 }
 
@@ -67,5 +67,5 @@ export interface IGmailGateway {
 }
 
 export interface IExpenseDatabase {
-  newExpense({ text, value }: IinputNewExpense): Promise<number[] | undefined>;
+  newExpense({ expense, value }: IinputNewExpense): Promise<number[] | undefined>;
 }

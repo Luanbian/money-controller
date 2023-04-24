@@ -5,7 +5,7 @@ export class ExpenseController implements IExpenseController {
 
     async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse<IExpenseOutput>> {
         const expenses = await this.expenseDatabase.newExpense({
-            text: expense.text,
+            expense: expense.expense,
             value: expense.value
         })
         return {
