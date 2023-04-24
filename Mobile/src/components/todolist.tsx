@@ -47,7 +47,7 @@ export const Todolist = () => {
     setInputExpense('');
   };
 
-  const handleUpdateExpense = (id?: number | null) => {
+  const handleUpdateExpense = (id: number) => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
 
@@ -111,26 +111,33 @@ export const Todolist = () => {
             setPopUp(true);
             setSelectedExpense(null);
           }}
+          style={styles.buttonContainer}
         >
-          <Text>+</Text>
+          <Text style={styles.buttonText}> + </Text>
         </Pressable>
       )}
       {listExpenses &&
         listExpenses.map((object) => (
           <View key={object.id.toString()}>
-            <Text>{object.expense}</Text>
-            <Text>{object.value}</Text>
-            <Pressable
-              onPress={() => {
-                setPopUp(true);
-                setSelectedExpense(object.id);
-              }}
-            >
-              <Text>Atualizar despesa</Text>
-            </Pressable>
-            <Pressable onPress={() => setConfirmDelete(true)}>
-              <Text>Deletar despesa</Text>
-            </Pressable>
+            <View style={styles.cardExpense}>
+              <View>
+                <Text>{object.expense}</Text>
+                <Text>{object.value}</Text>
+              </View>
+              <View>
+                <Pressable
+                  onPress={() => {
+                    setPopUp(true);
+                    setSelectedExpense(object.id);
+                  }}
+                >
+                  <Text>Atualizar despesa</Text>
+                </Pressable>
+                <Pressable onPress={() => setConfirmDelete(true)}>
+                  <Text>Deletar despesa</Text>
+                </Pressable>
+              </View>
+            </View>
             <Modal animationType="slide" transparent={true} visible={confirmDelete}>
               <View>
                 <Text>Deseja realmente excluir esta despesa?</Text>
