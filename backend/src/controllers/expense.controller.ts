@@ -1,9 +1,9 @@
-import { IExpenseController, IExpenseDatabase, IExpenseOutput, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
+import { IExpenseController, IExpenseDatabase, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
 
 export class ExpenseController implements IExpenseController {
     constructor(private readonly expenseDatabase: IExpenseDatabase) {}
 
-    async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse<IExpenseOutput>> {
+    async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse> {
         const expenses = await this.expenseDatabase.newExpense({
             expense: expense.expense,
             value: expense.value
@@ -11,7 +11,14 @@ export class ExpenseController implements IExpenseController {
         return {
             statusCode: 201,
             message: 'created',
-            data: { id: expenses }
+        }
+    }
+
+    async expenses(): Promise<IHttpsResponse> {
+        const listExpenses = await this.expenseDatabase.expenses();
+        return {
+            statusCode: 200,
+            message: listExpenses
         }
     }
 }

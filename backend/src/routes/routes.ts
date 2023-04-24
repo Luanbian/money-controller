@@ -21,3 +21,7 @@ router.post('/expense', async (req, res) => {
     const result = await expenseController.newExpense(expense);
     res.json(result);
 })
+router.get('/expense', async (req, res) => {
+    const result = await expenseController.expenses();
+    res.json(result);
+})

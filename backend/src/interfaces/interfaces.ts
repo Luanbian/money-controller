@@ -44,19 +44,18 @@ export interface IinputNewExpense {
   value: number
 }
 
-export interface IHttpsResponse<T = any> {
+export interface IHttpsResponse {
   message?: string | any[];
   statusCode: number;
-  data?: T;
 }
 
 export interface IExpenseOutput {
-  id?: number[] | number;
+  id: number, 
+  expense: string, 
+  value: number, 
+  isPaid: boolean
 }
 
-export interface IExpenseController {
-  newExpense(expense: IinputNewExpense): Promise<IHttpsResponse<IExpenseOutput>>;
-}
 
 export interface IGmailController {
   getTransaction(): Promise<Attributestype[]>
@@ -65,7 +64,12 @@ export interface IGmailController {
 export interface IGmailGateway {
   getTransaction(auth: string): Promise<Attributestype[]>
 }
+export interface IExpenseController {
+  newExpense(expense: IinputNewExpense): Promise<IHttpsResponse>;
+  expenses(): Promise<IHttpsResponse>;
+}
 
 export interface IExpenseDatabase {
   newExpense({ expense, value }: IinputNewExpense): Promise<number[] | undefined>;
+  expenses(): Promise<IExpenseOutput | undefined>;
 }
