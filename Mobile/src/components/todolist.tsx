@@ -4,26 +4,32 @@ import { View, TextInput, Button, Text } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
 
-interface MyObject {
+interface IExpenseInput {
   expense: string;
   value: number;
 }
 
+interface ListExpenses {
+  id: number;
+  expense: string;
+  value: number;
+  isPaid: number | boolean;
+}
+
 export const Todolist = () => {
   const [popUp, setPopUp] = useState(false);
-  const [inputText, setInputText] = useState('');
-  const [inputNumber, setInputNumber] = useState('');
-  const [objectArray, setObjectArray] = useState<MyObject[]>([]);
+  const [inputExpense, setInputExpense] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
 
   const handleAddObject = () => {
-    if (inputText.length < 3) return;
-    const expense: MyObject = { expense: inputText, value: Number(inputNumber) };
-    setObjectArray([...objectArray, expense]);
+    if (inputExpense.length < 3) return;
+    const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
 
     axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
 
-    setInputText('');
-    setInputNumber('');
+    setInputExpense('');
+    setInputValue('');
     setPopUp(false);
   };
 
@@ -31,10 +37,10 @@ export const Todolist = () => {
     <View>
       {popUp && (
         <View>
-          <TextInput value={inputText} onChangeText={setInputText} placeholder="Nome da despesa" />
+          <TextInput value={inputExpense} onChangeText={setInputExpense} placeholder="Nome da despesa" />
           <TextInputMask
-            value={inputNumber}
-            onChangeText={setInputNumber}
+            value={inputValue}
+            onChangeText={setInputValue}
             placeholder="Valor da despesa"
             type={'money'}
             options={{
@@ -50,7 +56,7 @@ export const Todolist = () => {
         </View>
       )}
       {!popUp && <Button title="+" onPress={() => setPopUp(true)} />}
-      {objectArray.map((object, index) => (
+      {listExpenses.map((object, index) => (
         <View key={index}>
           <Text>{object.expense}</Text>
           <Text>{object.value}</Text>
