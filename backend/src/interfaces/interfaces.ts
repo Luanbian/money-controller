@@ -39,6 +39,25 @@ export interface GoogleAdapter {
   gmail: (props: {version: 'v1'; auth: string}) => GoogleGmailAdapter;
 }
 
+export interface IinputNewExpense {
+  text: string,
+  value: number
+}
+
+export interface IHttpsResponse<T = any> {
+  message?: string | any[];
+  statusCode: number;
+  data?: T;
+}
+
+export interface IExpenseOutput {
+  id?: number[] | number;
+}
+
+export interface IExpenseController {
+  newExpense(expense: IinputNewExpense): Promise<IHttpsResponse<IExpenseOutput>>;
+}
+
 export interface IGmailController {
   getTransaction(): Promise<Attributestype[]>
 }

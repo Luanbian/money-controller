@@ -2,6 +2,7 @@ import { GmailGateway } from '../gateways/gmail.gateway';
 import { GmailController } from '../controllers/gmail.controller';
 import { google } from 'googleapis';
 import { GoogleAdapter, GoogleGmailAdapter } from '../interfaces/interfaces';
+import { ExpenseController } from '../controllers/expense.controller';
 
 export const makeGmailGateway = () => {
   const adapterGoogle: GoogleAdapter = {
@@ -24,3 +25,7 @@ export const makeGmailController = () => {
   const gmailGateway = makeGmailGateway();
   return new GmailController(gmailGateway);
 };
+
+export const makeExpenseController = () => {
+  return new ExpenseController();
+}
