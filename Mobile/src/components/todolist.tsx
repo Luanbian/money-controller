@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text } from 'react-native';
+import { View, TextInput, Button, Text, Modal } from 'react-native';
 import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
 
@@ -22,6 +22,7 @@ export const Todolist = () => {
   const [inputValue, setInputValue] = useState('');
   const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     axios
@@ -45,7 +46,7 @@ export const Todolist = () => {
     setPopUp(false);
   };
 
-  const handleupdateObject = (id?: number | null) => {
+  const handleUpdateObject = (id?: number | null) => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
 
@@ -54,6 +55,11 @@ export const Todolist = () => {
     setInputExpense('');
     setInputValue('');
     setPopUp(false);
+  };
+
+  const handleDeleteObject = (id: number) => {
+    axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
+    setConfirmDelete(false);
   };
 
   return (
@@ -80,7 +86,7 @@ export const Todolist = () => {
           {!selectedExpense ? (
             <Button title="Adicionar Despesa" onPress={handleAddObject} />
           ) : (
-            <Button title="Atualizar Despesa" onPress={() => handleupdateObject(selectedExpense)} />
+            <Button title="Atualizar Despesa" onPress={() => handleUpdateObject(selectedExpense)} />
           )}
         </>
       )}
@@ -98,6 +104,14 @@ export const Todolist = () => {
                 setSelectedExpense(id);
               }}
             />
+            <Button title="Deletar Despesa" onPress={() => setConfirmDelete(true)} />
+            <Modal animationType="slide" transparent={true} visible={confirmDelete}>
+              <View>
+                <Text>Deseja realmente excluir esta despesa?</Text>
+                <Button title="Deletar" onPress={() => handleDeleteObject(object.id)} />
+                <Button title="Cancelar" onPress={() => setConfirmDelete(false)} />
+              </View>
+            </Modal>
           </View>
         ))}
     </View>
