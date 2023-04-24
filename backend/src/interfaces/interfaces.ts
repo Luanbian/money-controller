@@ -45,8 +45,9 @@ export interface IinputNewExpense {
 }
 
 export interface IHttpsResponse {
-  message?: string | any[];
+  message: string;
   statusCode: number;
+  data?: number[] | IExpenseOutput
 }
 
 export interface IExpenseOutput {

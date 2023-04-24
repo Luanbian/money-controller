@@ -11,6 +11,7 @@ export class ExpenseController implements IExpenseController {
         return {
             statusCode: 201,
             message: 'created',
+            data: expenses
         }
     }
 
@@ -18,7 +19,8 @@ export class ExpenseController implements IExpenseController {
         const listExpenses = await this.expenseDatabase.expenses();
         return {
             statusCode: 200,
-            message: listExpenses
+            message: 'Ok',
+            data: listExpenses
         }
     }
 }
