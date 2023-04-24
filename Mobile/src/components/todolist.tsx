@@ -5,24 +5,24 @@ import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
 
 interface IExpenseInput {
-  expense: string;
   value: number;
+  expense: string;
 }
 
 interface ListExpenses {
   id: number;
-  expense: string;
   value: number;
+  expense: string;
   isPaid: number | boolean;
 }
 
 export const Todolist = () => {
   const [popUp, setPopUp] = useState(false);
-  const [inputExpense, setInputExpense] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [inputExpense, setInputExpense] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     axios
@@ -35,29 +35,29 @@ export const Todolist = () => {
       });
   }, []);
 
-  const handleAddObject = () => {
+  const handleNewExpense = () => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
 
     axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
 
-    setInputExpense('');
-    setInputValue('');
     setPopUp(false);
+    setInputValue('');
+    setInputExpense('');
   };
 
-  const handleUpdateObject = (id?: number | null) => {
+  const handleUpdateExpense = (id?: number | null) => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
 
     axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
 
-    setInputExpense('');
-    setInputValue('');
     setPopUp(false);
+    setInputValue('');
+    setInputExpense('');
   };
 
-  const handleDeleteObject = (id: number) => {
+  const handleDeleteExpense = (id: number) => {
     axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
     setConfirmDelete(false);
   };
@@ -69,10 +69,10 @@ export const Todolist = () => {
           <>
             <TextInput value={inputExpense} onChangeText={setInputExpense} placeholder="Nome da despesa" />
             <TextInputMask
+              type={'money'}
               value={inputValue}
               onChangeText={setInputValue}
               placeholder="Valor da despesa"
-              type={'money'}
               options={{
                 precision: 2,
                 separator: '.',
@@ -84,13 +84,13 @@ export const Todolist = () => {
             />
           </>
           {!selectedExpense ? (
-            <Button title="Adicionar Despesa" onPress={handleAddObject} />
+            <Button title="Adicionar Despesa" onPress={handleNewExpense} />
           ) : (
-            <Button title="Atualizar Despesa" onPress={() => handleUpdateObject(selectedExpense)} />
+            <Button title="Atualizar Despesa" onPress={() => handleUpdateExpense(selectedExpense)} />
           )}
         </>
       )}
-      {!popUp && <Button title="add despesa" onPress={() => setPopUp(true)} />}
+      {!popUp && <Button title="+" onPress={() => setPopUp(true)} />}
       {listExpenses &&
         listExpenses.map((object) => (
           <View key={object.id.toString()}>
@@ -108,7 +108,7 @@ export const Todolist = () => {
             <Modal animationType="slide" transparent={true} visible={confirmDelete}>
               <View>
                 <Text>Deseja realmente excluir esta despesa?</Text>
-                <Button title="Deletar" onPress={() => handleDeleteObject(object.id)} />
+                <Button title="Deletar" onPress={() => handleDeleteExpense(object.id)} />
                 <Button title="Cancelar" onPress={() => setConfirmDelete(false)} />
               </View>
             </Modal>
