@@ -70,6 +70,15 @@ export const Todolist = () => {
       newList[index].isPaid = !newList[index].isPaid;
       return newList;
     });
+    const isPaidRequest: { id: number; isPaid: boolean }[] = [];
+    listExpenses.forEach((expense) => {
+      const obj = {
+        id: expense.id,
+        isPaid: expense.isPaid,
+      };
+      isPaidRequest.push(obj);
+    });
+    console.log(isPaidRequest);
   };
 
   return (
