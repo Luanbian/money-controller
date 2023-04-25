@@ -45,4 +45,13 @@ export class ExpenseController implements IExpenseController {
             data: expenses
         }
     }
+
+    async updateIsPaid(id: string): Promise<IHttpsResponse> {
+        const expenses = await this.expenseDatabase.updateIsPaid(id);
+        return {
+            statusCode: 200,
+            message: 'Updated isPaid',
+            data: expenses
+        }
+    }
 }

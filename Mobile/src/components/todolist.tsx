@@ -64,20 +64,8 @@ export const Todolist = () => {
     setConfirmDelete(false);
   };
 
-  const handleChangeIsPaid = (index: number) => {
-    setListExpenses((list) => {
-      list[index].isPaid = !list[index].isPaid;
-      return list;
-    });
-    const isPaidRequest: { id: number; isPaid: boolean }[] = [];
-    listExpenses.forEach((expense) => {
-      const obj = {
-        id: expense.id,
-        isPaid: expense.isPaid,
-      };
-      isPaidRequest.push(obj);
-    });
-    console.log(isPaidRequest);
+  const handleChangeIsPaid = (id: number) => {
+    axios.put(`${baseURL}/expense/isPaid/${id}`).then((response) => console.log(response.data));
   };
 
   return (
@@ -130,15 +118,16 @@ export const Todolist = () => {
         </Pressable>
       )}
       {listExpenses &&
-        listExpenses.map((object, index) => (
+        listExpenses.map((object) => (
           <View key={object.id.toString()}>
             <View style={styles.cardAll}>
               <View style={styles.cardData}>
                 <BouncyCheckbox
+                  key={object.id}
                   isChecked={object.isPaid}
                   size={25}
                   text={object.expense}
-                  onPress={() => handleChangeIsPaid(index)}
+                  onPress={() => handleChangeIsPaid(object.id)}
                 />
               </View>
               <View style={styles.cardData}>

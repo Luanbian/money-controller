@@ -41,4 +41,19 @@ export class ExpenseDatabase implements IExpenseDatabase {
             Promise.reject(new Error(error));
         }
     }
+
+    async updateIsPaid(id: string): Promise<number | undefined | any[]> {
+        try {
+            const consult = await knex.select('isPaid').from('expenses').where('id', id);
+            const value = consult[0].isPaid;
+            let updateValue;
+            value == 0 ? updateValue = 1 : updateValue = 0;
+            const result = await knex('expenses').update({
+                isPaid: updateValue
+            }).where('id', id);
+            return result;
+        } catch (error) {
+            Promise.reject(new Error(error));
+        }
+    }
 }
