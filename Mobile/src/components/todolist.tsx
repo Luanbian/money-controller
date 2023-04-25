@@ -64,7 +64,7 @@ export const Todolist = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       {popUp && (
         <>
           <>
@@ -89,20 +89,17 @@ export const Todolist = () => {
               <Pressable onPress={handleNewExpense}>
                 <Text>Adicionar despesa</Text>
               </Pressable>
-              <Pressable onPress={() => setPopUp(false)}>
-                <Text>Voltar</Text>
-              </Pressable>
             </>
           ) : (
             <>
               <Pressable onPress={() => handleUpdateExpense(selectedExpense)}>
                 <Text>Atualizar despesa</Text>
               </Pressable>
-              <Pressable onPress={() => setPopUp(false)}>
-                <Text>Voltar</Text>
-              </Pressable>
             </>
           )}
+          <Pressable onPress={() => setPopUp(false)}>
+            <Text>Voltar</Text>
+          </Pressable>
         </>
       )}
       {!popUp && (
@@ -111,20 +108,19 @@ export const Todolist = () => {
             setPopUp(true);
             setSelectedExpense(null);
           }}
-          style={styles.buttonContainer}
         >
-          <Text style={styles.buttonText}> + </Text>
+          <Text> Adicionar Despesa </Text>
         </Pressable>
       )}
       {listExpenses &&
         listExpenses.map((object) => (
           <View key={object.id.toString()}>
-            <View style={styles.cardExpense}>
-              <View>
+            <View style={styles.cardAll}>
+              <View style={styles.cardData}>
                 <Text>{object.expense}</Text>
                 <Text>{object.value}</Text>
               </View>
-              <View>
+              <View style={styles.cardData}>
                 <Pressable
                   onPress={() => {
                     setPopUp(true);

@@ -1,22 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
-    paddingTop: 30,
-  },
-  buttonContainer: {
-    backgroundColor: 'blue',
-    padding: 10,
-  },
-  buttonText: {
-    color: 'white',
-  },
-  cardExpense: {
-    borderColor: 'red',
-    borderWidth: 5,
+  cardAll: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 10,
+  },
+  cardData: {
+    marginHorizontal: 40,
   },
 });
