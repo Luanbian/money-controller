@@ -3,6 +3,7 @@ import { baseURL } from '../api/api';
 import { styles } from '../styles/todolist.styled';
 import React, { useState, useEffect } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import { View, TextInput, Pressable, Text, Modal } from 'react-native';
 
 interface IExpenseInput {
@@ -14,7 +15,7 @@ interface ListExpenses {
   id: number;
   value: number;
   expense: string;
-  isPaid: number | boolean;
+  isPaid: boolean;
 }
 
 export const Todolist = () => {
@@ -61,6 +62,14 @@ export const Todolist = () => {
   const handleDeleteExpense = (id: number) => {
     axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
     setConfirmDelete(false);
+  };
+
+  const handleChangeIsPaid = (index: number) => {
+    setListExpenses((prevList) => {
+      const newList = [...prevList];
+      newList[index].isPaid = !newList[index].isPaid;
+      return newList;
+    });
   };
 
   return (
@@ -113,12 +122,16 @@ export const Todolist = () => {
         </Pressable>
       )}
       {listExpenses &&
-        listExpenses.map((object) => (
+        listExpenses.map((object, index) => (
           <View key={object.id.toString()}>
             <View style={styles.cardAll}>
               <View style={styles.cardData}>
-                <Text>{object.expense}</Text>
-                <Text>{object.value}</Text>
+                <BouncyCheckbox
+                  isChecked={object.isPaid}
+                  size={25}
+                  text={object.expense}
+                  onPress={() => handleChangeIsPaid(index)}
+                />
               </View>
               <View style={styles.cardData}>
                 <Pressable
