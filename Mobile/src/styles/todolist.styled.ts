@@ -7,6 +7,6 @@ export const styles = StyleSheet.create({
     margin: 10,
   },
   cardData: {
-    marginHorizontal: 40,
+    marginHorizontal: 20,
   },
 });

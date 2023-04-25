@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Pressable, Text, Modal } from 'react-native';
-import { styles } from '../styles/todolist.styled';
-import { TextInputMask } from 'react-native-masked-text';
 import { baseURL } from '../api/api';
+import { styles } from '../styles/todolist.styled';
+import React, { useState, useEffect } from 'react';
+import { TextInputMask } from 'react-native-masked-text';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import { View, TextInput, Pressable, Text, Modal } from 'react-native';
 
 interface IExpenseInput {
   value: number;
@@ -21,6 +22,7 @@ export const Todolist = () => {
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
+  const [checkboxState, setCheckboxState] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
@@ -117,7 +119,13 @@ export const Todolist = () => {
           <View key={object.id.toString()}>
             <View style={styles.cardAll}>
               <View style={styles.cardData}>
-                <Text>{object.expense}</Text>
+                <BouncyCheckbox
+                  size={25}
+                  fillColor="red"
+                  unfillColor="#FFFFFF"
+                  text={object.expense}
+                  onPress={() => setCheckboxState(!checkboxState)}
+                />
                 <Text>{object.value}</Text>
               </View>
               <View style={styles.cardData}>
