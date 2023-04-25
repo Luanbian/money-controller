@@ -65,6 +65,11 @@ export const Todolist = () => {
     setConfirmDelete(false);
   };
 
+  const handleCheckBox = () => {
+    setCheckboxState(!checkboxState);
+    console.log(checkboxState);
+  };
+
   return (
     <View>
       {popUp && (
@@ -124,7 +129,7 @@ export const Todolist = () => {
                   fillColor="red"
                   unfillColor="#FFFFFF"
                   text={object.expense}
-                  onPress={() => setCheckboxState(!checkboxState)}
+                  onPress={() => handleCheckBox()}
                 />
                 <Text>{object.value}</Text>
               </View>
