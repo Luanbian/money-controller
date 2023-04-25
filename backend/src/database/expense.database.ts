@@ -42,7 +42,7 @@ export class ExpenseDatabase implements IExpenseDatabase {
         }
     }
 
-    async updateIsPaid(id: string): Promise<number | undefined | any[]> {
+    async updateIsPaid(id: string): Promise<number | undefined> {
         try {
             const consult = await knex.select('isPaid').from('expenses').where('id', id);
             const value = consult[0].isPaid;

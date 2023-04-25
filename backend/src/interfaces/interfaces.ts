@@ -84,5 +84,5 @@ export interface IExpenseDatabase {
   expenses(): Promise<IExpenseOutput | undefined>;
   updateExpense({id, expense, value}: IinputUpdateExpense): Promise<number | undefined>;
   deleteExpense(id: string): Promise<number | undefined>;
-  updateIsPaid(id: string): Promise<number | undefined | any[]>;
+  updateIsPaid(id: string): Promise<number | undefined>;
 }
