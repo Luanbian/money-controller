@@ -65,10 +65,9 @@ export const Todolist = () => {
   };
 
   const handleChangeIsPaid = (index: number) => {
-    setListExpenses((prevList) => {
-      const newList = [...prevList];
-      newList[index].isPaid = !newList[index].isPaid;
-      return newList;
+    setListExpenses((list) => {
+      list[index].isPaid = !list[index].isPaid;
+      return list;
     });
     const isPaidRequest: { id: number; isPaid: boolean }[] = [];
     listExpenses.forEach((expense) => {
