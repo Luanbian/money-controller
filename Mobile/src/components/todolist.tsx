@@ -4,6 +4,7 @@ import { styles } from '../styles/todolist.styled';
 import React, { useState, useEffect } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+// usar modalize
 import { View, TextInput, Pressable, Text, Modal } from 'react-native';
 
 interface IExpenseInput {
@@ -18,7 +19,8 @@ interface ListExpenses {
   isPaid: boolean;
 }
 
-export const Todolist = () => {
+// usar customHooks
+export const ExpensesFixedList = () => {
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
@@ -65,7 +67,7 @@ export const Todolist = () => {
   };
 
   const handleChangeIsPaid = (id: number) => {
-    axios.put(`${baseURL}/expense/isPaid/${id}`).then((response) => console.log(response.data));
+    axios.put(`${baseURL}/expense/${id}/isPaid`).then((response) => console.log(response.data));
   };
 
   return (
@@ -129,6 +131,7 @@ export const Todolist = () => {
                   text={object.expense}
                   onPress={() => handleChangeIsPaid(object.id)}
                 />
+                <Text>{object.value}</Text>
               </View>
               <View style={styles.cardData}>
                 <Pressable

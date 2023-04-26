@@ -39,7 +39,7 @@ router.delete('/expense/:id', async (req, res) => {
     const result = await expenseController.deleteExpense(id);
     res.json(result);
 })
-router.put('/expense/isPaid/:id', async (req, res) => {
+router.put('/expense/:id/isPaid', async (req, res) => {
     const id = IdSchema.parse(req.params).id;
     const result = await expenseController.updateIsPaid(id);
     res.json(result);

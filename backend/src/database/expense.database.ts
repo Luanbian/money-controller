@@ -9,7 +9,7 @@ export class ExpenseDatabase implements IExpenseDatabase {
             })
             return result;
         } catch (error) {
-            Promise.reject(new Error(error));
+            return error;
         }
     }
 
@@ -18,7 +18,7 @@ export class ExpenseDatabase implements IExpenseDatabase {
             const result: IExpenseOutput = await knex.select('*').from('expenses')
             return result;
         } catch (error) {
-            Promise.reject(new Error(error));
+            return error;
         }
     }
 
@@ -29,7 +29,7 @@ export class ExpenseDatabase implements IExpenseDatabase {
             }).where('id', id);
             return result;
         } catch (error) {
-            Promise.reject(new Error(error));
+            return error;
         }
     }
 
@@ -38,7 +38,7 @@ export class ExpenseDatabase implements IExpenseDatabase {
             const result = await knex('expenses').delete().where('id', id);
             return result;
         } catch (error) {
-            Promise.reject(new Error(error));
+            return error;
         }
     }
 
@@ -46,14 +46,12 @@ export class ExpenseDatabase implements IExpenseDatabase {
         try {
             const consult = await knex.select('isPaid').from('expenses').where('id', id);
             const value = consult[0].isPaid;
-            let updateValue;
-            value == 0 ? updateValue = 1 : updateValue = 0;
             const result = await knex('expenses').update({
-                isPaid: updateValue
+                isPaid: !value
             }).where('id', id);
             return result;
         } catch (error) {
-            Promise.reject(new Error(error));
+            return error;
         }
     }
 }

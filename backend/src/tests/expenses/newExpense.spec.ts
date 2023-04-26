@@ -4,7 +4,7 @@ import { ExpenseController } from "../../controllers/expense.controller";
 describe('Create a new expense', () => {
     it('should be able to create a new expense', async () => {
         const expenseMock = vi.fn().mockResolvedValue([1]);
-        const expenseController = new ExpenseController({expense: expenseMock} as any)
+        const expenseController = new ExpenseController({newExpense: expenseMock} as any)
         const input = {
             expense: 'Teste',
             value: 1
