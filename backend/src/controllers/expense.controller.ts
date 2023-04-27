@@ -1,7 +1,10 @@
 import { IExpenseController, IExpenseDatabase, IHelper, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
 
 export class ExpenseController implements IExpenseController {
-    constructor(private readonly expenseDatabase: IExpenseDatabase, private readonly helper: IHelper) {}
+    constructor(
+        private readonly expenseDatabase: IExpenseDatabase, 
+        private readonly helper: IHelper
+    ) {}
 
     async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse> {
         const expenses = await this.expenseDatabase.newExpense({
