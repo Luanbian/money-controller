@@ -2,10 +2,10 @@ import useSWR from 'swr';
 import axios from 'axios';
 import { baseURL } from '../api/api';
 import { styles } from '../styles/todolist.styled';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import Modalize from 'react-native-modalize';
+import { Modalize } from 'react-native-modalize';
 import { View, TextInput, Pressable, Text } from 'react-native';
 
 interface IExpenseInput {
@@ -21,11 +21,11 @@ interface ListExpenses {
 }
 
 export const ExpensesFixedList = () => {
+  const modalizeRef = useRef<Modalize>();
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
-
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
   const { data, error } = useSWR(`${baseURL}/expense`, fetcher);
 
@@ -131,8 +131,21 @@ export const ExpensesFixedList = () => {
                 >
                   <Text>Atualizar despesa</Text>
                 </Pressable>
-                <Pressable>
+                <Pressable onPress={() => modalizeRef.current?.open()}>
                   <Text>Deletar despesa</Text>
+                </Pressable>
+                <View>
+                  <Modalize ref={modalizeRef}>
+                    <Pressable onPress={() => handleDeleteExpense(object.id)}>
+                      <Text>Deletar despesa</Text>
+                    </Pressable>
+                    <Pressable onPress={() => modalizeRef.current?.close()}>
+                      <Text>Voltar</Text>
+                    </Pressable>
+                  </Modalize>
+                </View>
+                <Pressable onPress={() => modalizeRef.current?.close()}>
+                  <Text>Voltar</Text>
                 </Pressable>
               </View>
             </View>
