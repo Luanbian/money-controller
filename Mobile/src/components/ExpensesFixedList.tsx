@@ -30,26 +30,23 @@ export const ExpensesFixedList = () => {
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
   const { data, error } = useSWR(`${baseURL}/expense`, fetcher);
 
-  const handleNewExpense = () => {
+  const cleanPopUp = () => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
-
-    axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
-
     setPopUp(false);
     setInputValue('');
     setInputExpense('');
+    return expense;
+  };
+
+  const handleNewExpense = () => {
+    const expense = cleanPopUp();
+    axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
   };
 
   const handleUpdateExpense = (id: number) => {
-    if (inputExpense.length < 3) return;
-    const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
-
+    const expense = cleanPopUp();
     axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
-
-    setPopUp(false);
-    setInputValue('');
-    setInputExpense('');
   };
 
   const handleDeleteExpense = (id: number) => {
