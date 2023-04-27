@@ -5,8 +5,8 @@ import { styles } from '../styles/todolist.styled';
 import React, { useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-// usar modalize
-import { View, TextInput, Pressable, Text, Modal } from 'react-native';
+import Modalize from 'react-native-modalize';
+import { View, TextInput, Pressable, Text } from 'react-native';
 
 interface IExpenseInput {
   value: number;
@@ -24,7 +24,6 @@ export const ExpensesFixedList = () => {
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
 
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
@@ -54,7 +53,6 @@ export const ExpensesFixedList = () => {
 
   const handleDeleteExpense = (id: number) => {
     axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
-    setConfirmDelete(false);
   };
 
   const handleChangeIsPaid = (id: number) => {
@@ -133,22 +131,11 @@ export const ExpensesFixedList = () => {
                 >
                   <Text>Atualizar despesa</Text>
                 </Pressable>
-                <Pressable onPress={() => setConfirmDelete(true)}>
+                <Pressable>
                   <Text>Deletar despesa</Text>
                 </Pressable>
               </View>
             </View>
-            <Modal animationType="slide" transparent={true} visible={confirmDelete}>
-              <View>
-                <Text>Deseja realmente excluir esta despesa?</Text>
-                <Pressable onPress={() => handleDeleteExpense(object.id)}>
-                  <Text>Deletar</Text>
-                </Pressable>
-                <Pressable onPress={() => setConfirmDelete(false)}>
-                  <Text>Cancelar</Text>
-                </Pressable>
-              </View>
-            </Modal>
           </View>
         ))}
       {error && <Text>{error.message}</Text>}
