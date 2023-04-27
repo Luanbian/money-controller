@@ -51,8 +51,8 @@ export interface IinputUpdateExpense {
 }
 
 export interface IHttpsResponse {
-  message: string;
-  statusCode: number;
+  message?: string;
+  statusCode?: number;
   data?: number[] | IExpenseOutput | number
 }
 
@@ -63,6 +63,9 @@ export interface IExpenseOutput {
   isPaid: boolean
 }
 
+export interface IHelper {
+  ok({ statusCode, data, message }: IHttpsResponse): IHttpsResponse
+}
 
 export interface IGmailController {
   getTransaction(): Promise<Attributestype[]>
