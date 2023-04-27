@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import useSWR from 'swr';
 import axios from 'axios';
 import { baseURL } from '../api/api';
@@ -52,7 +53,8 @@ export const ExpensesFixedList = () => {
   };
 
   const handleDeleteExpense = (id: number) => {
-    axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
+    console.log(id);
+    //axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
   };
 
   const handleChangeIsPaid = (id: number) => {
@@ -134,21 +136,28 @@ export const ExpensesFixedList = () => {
                 <Pressable onPress={() => modalizeRef.current?.open()}>
                   <Text>Deletar despesa</Text>
                 </Pressable>
-                <View>
-                  <Modalize ref={modalizeRef}>
-                    <Pressable onPress={() => handleDeleteExpense(object.id)}>
-                      <Text>Deletar despesa</Text>
-                    </Pressable>
-                    <Pressable onPress={() => modalizeRef.current?.close()}>
-                      <Text>Voltar</Text>
-                    </Pressable>
-                  </Modalize>
-                </View>
-                <Pressable onPress={() => modalizeRef.current?.close()}>
-                  <Text>Voltar</Text>
-                </Pressable>
               </View>
             </View>
+            <Modalize ref={modalizeRef} modalStyle={{ backgroundColor: 'red', borderRadius: 10 }} modalHeight={300}>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Confirmação de exclusão</Text>
+                <Text style={{ marginBottom: 20 }}>Tem certeza que deseja excluir a despesa {object.expense}?</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                  <Pressable
+                    style={{ backgroundColor: 'red', padding: 10, borderRadius: 5 }}
+                    onPress={() => handleDeleteExpense(object.id)}
+                  >
+                    <Text style={{ color: 'white' }}>Excluir</Text>
+                  </Pressable>
+                  <Pressable
+                    style={{ backgroundColor: 'gray', padding: 10, borderRadius: 5 }}
+                    onPress={() => modalizeRef.current?.close()}
+                  >
+                    <Text style={{ color: 'white' }}>Cancelar</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modalize>
           </View>
         ))}
       {error && <Text>{error.message}</Text>}
