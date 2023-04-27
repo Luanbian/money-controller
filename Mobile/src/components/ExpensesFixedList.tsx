@@ -1,7 +1,8 @@
+import useSWR from 'swr';
 import axios from 'axios';
 import { baseURL } from '../api/api';
 import { styles } from '../styles/todolist.styled';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 // usar modalize
@@ -19,25 +20,15 @@ interface ListExpenses {
   isPaid: boolean;
 }
 
-// usar customHooks
 export const ExpensesFixedList = () => {
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [listExpenses, setListExpenses] = useState<ListExpenses[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
 
-  useEffect(() => {
-    axios
-      .get(`${baseURL}/expense`)
-      .then((response) => {
-        setListExpenses(response.data.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
+  const { data, error } = useSWR(`${baseURL}/expense`, fetcher);
 
   const handleNewExpense = () => {
     if (inputExpense.length < 3) return;
@@ -119,8 +110,8 @@ export const ExpensesFixedList = () => {
           <Text> Adicionar Despesa </Text>
         </Pressable>
       )}
-      {listExpenses &&
-        listExpenses.map((object) => (
+      {data &&
+        data.map((object: ListExpenses) => (
           <View key={object.id.toString()}>
             <View style={styles.cardAll}>
               <View style={styles.cardData}>
@@ -160,6 +151,7 @@ export const ExpensesFixedList = () => {
             </Modal>
           </View>
         ))}
+      {error && <Text>{error.message}</Text>}
     </View>
   );
 };
