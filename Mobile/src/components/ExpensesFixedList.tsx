@@ -27,8 +27,7 @@ export const ExpensesFixedList = () => {
   const { control, handleSubmit } = useForm<IExpenseInput>({ defaultValues: { value: 0, expense: '' } });
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
-  const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
-  const { data: expenses, error } = useSWR<ListExpenses[]>(`${baseURL}/expense`, fetcher);
+  const { data: expenses, error } = useSWR<ListExpenses[]>(`${baseURL}/expense`);
 
   const deletingExpense = expenses?.find((expense) => expense.id === deletingId);
 
