@@ -6,6 +6,7 @@ import React, { useRef, useState } from 'react';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import { Modalize } from 'react-native-modalize';
+import { useForm } from 'react-hook-form';
 import { View, TextInput, Pressable, Text } from 'react-native';
 
 interface IExpenseInput {
@@ -21,7 +22,7 @@ interface ListExpenses {
 }
 
 export const ExpensesFixedList = () => {
-  // usar reactHookForm ou generico
+  const {register, handleSubmit} = useForm<IExpenseInput>();
   const modalizeRef = useRef<Modalize>();
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
@@ -33,31 +34,20 @@ export const ExpensesFixedList = () => {
 
   const deletingExpense = expenses?.find((expense) => expense.id === deletingId);
 
-  const handleSubmit = () => {
-    if (inputExpense.length < 3) return;
-    const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
-    setPopUp(false);
-    setInputValue('');
-    setInputExpense('');
-    return expense;
-  };
-
   const handleNewExpense = () => {
-    const expense = handleSubmit();
-    axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
+    // axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
   };
 
   const handleUpdateExpense = (id: number) => {
-    const expense = handleSubmit();
-    axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
+    // axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
   };
 
   const handleDeleteExpense = (id: number) => {
-    axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
+    // axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
   };
 
   const handleChangeIsPaid = (id: number) => {
-    axios.put(`${baseURL}/expense/${id}/isPaid`).then((response) => console.log(response.data));
+    // axios.put(`${baseURL}/expense/${id}/isPaid`).then((response) => console.log(response.data));
   };
 
   return (
