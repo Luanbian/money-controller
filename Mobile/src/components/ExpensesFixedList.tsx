@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import useSWR from 'swr';
 import axios from 'axios';
 import { baseURL } from '../api/api';
@@ -22,15 +21,19 @@ interface ListExpenses {
 }
 
 export const ExpensesFixedList = () => {
+  // usar reactHookForm ou generico
   const modalizeRef = useRef<Modalize>();
   const [popUp, setPopUp] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [inputExpense, setInputExpense] = useState('');
   const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
-  const { data, error } = useSWR(`${baseURL}/expense`, fetcher);
+  const { data: expenses, error } = useSWR<ListExpenses[]>(`${baseURL}/expense`, fetcher);
 
-  const cleanPopUp = () => {
+  const deletingExpense = expenses?.find((expense) => expense.id === deletingId);
+
+  const handleSubmit = () => {
     if (inputExpense.length < 3) return;
     const expense: IExpenseInput = { expense: inputExpense, value: Number(inputValue) };
     setPopUp(false);
@@ -40,18 +43,17 @@ export const ExpensesFixedList = () => {
   };
 
   const handleNewExpense = () => {
-    const expense = cleanPopUp();
+    const expense = handleSubmit();
     axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
   };
 
   const handleUpdateExpense = (id: number) => {
-    const expense = cleanPopUp();
+    const expense = handleSubmit();
     axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
   };
 
   const handleDeleteExpense = (id: number) => {
-    console.log(id);
-    //axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
+    axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
   };
 
   const handleChangeIsPaid = (id: number) => {
@@ -107,8 +109,8 @@ export const ExpensesFixedList = () => {
           <Text> Adicionar Despesa </Text>
         </Pressable>
       )}
-      {data &&
-        data.map((object: ListExpenses) => (
+      {expenses &&
+        expenses.map((object: ListExpenses) => (
           <View key={object.id.toString()}>
             <View style={styles.cardAll}>
               <View style={styles.cardData}>
@@ -130,33 +132,34 @@ export const ExpensesFixedList = () => {
                 >
                   <Text>Atualizar despesa</Text>
                 </Pressable>
-                <Pressable onPress={() => modalizeRef.current?.open()}>
+                <Pressable
+                  onPress={() => {
+                    modalizeRef.current?.open();
+                    setDeletingId(object.id);
+                  }}
+                >
                   <Text>Deletar despesa</Text>
                 </Pressable>
               </View>
             </View>
-            <Modalize ref={modalizeRef} modalStyle={{ backgroundColor: 'red', borderRadius: 10 }} modalHeight={300}>
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Confirmação de exclusão</Text>
-                <Text style={{ marginBottom: 20 }}>Tem certeza que deseja excluir a despesa {object.expense}?</Text>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                  <Pressable
-                    style={{ backgroundColor: 'red', padding: 10, borderRadius: 5 }}
-                    onPress={() => handleDeleteExpense(object.id)}
-                  >
-                    <Text style={{ color: 'white' }}>Excluir</Text>
-                  </Pressable>
-                  <Pressable
-                    style={{ backgroundColor: 'gray', padding: 10, borderRadius: 5 }}
-                    onPress={() => modalizeRef.current?.close()}
-                  >
-                    <Text style={{ color: 'white' }}>Cancelar</Text>
-                  </Pressable>
-                </View>
-              </View>
-            </Modalize>
           </View>
         ))}
+      <Modalize ref={modalizeRef} modalHeight={300}>
+        {deletingId && deletingExpense && (
+          <>
+            <Text>Confirmação de exclusão</Text>
+            <Text>Tem certeza que deseja excluir a despesa {deletingExpense.expense}?</Text>
+            <>
+              <Pressable onPress={() => handleDeleteExpense(deletingId)}>
+                <Text>Excluir</Text>
+              </Pressable>
+              <Pressable onPress={() => modalizeRef.current?.close()}>
+                <Text>Cancelar</Text>
+              </Pressable>
+            </>
+          </>
+        )}
+      </Modalize>
       {error && <Text>{error.message}</Text>}
     </View>
   );
