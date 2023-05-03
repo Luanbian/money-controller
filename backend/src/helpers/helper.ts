@@ -1,6 +1,6 @@
 import { IHelper, IHttpsResponse } from "../interfaces/interfaces";
 
-export class Helper implements IHelper {
+export class HttpResponseHelper implements IHelper {
   ok({ statusCode, data, message }: IHttpsResponse): IHttpsResponse {
     return {
       statusCode: statusCode ?? 200,

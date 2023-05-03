@@ -4,7 +4,6 @@ import { google } from 'googleapis';
 import { GoogleAdapter, GoogleGmailAdapter } from '../interfaces/interfaces';
 import { ExpenseController } from '../controllers/expense.controller';
 import { ExpenseDatabase } from '../database/expense.database';
-import { Helper } from '../helpers/helper';
 
 export const makeGmailGateway = () => {
   const adapterGoogle: GoogleAdapter = {
@@ -32,12 +31,7 @@ export const makeExpenseDatabase = () => {
   return new ExpenseDatabase();
 };
 
-export const makeHelper = () => {
-  return new Helper();
-}
-
 export const makeExpenseController = () => {
   const expenseDatabase = makeExpenseDatabase();
-  const helper = makeHelper();
-  return new ExpenseController(expenseDatabase, helper);
+  return new ExpenseController(expenseDatabase);
 };

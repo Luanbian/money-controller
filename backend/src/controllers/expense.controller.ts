@@ -1,9 +1,8 @@
-import { IExpenseController, IExpenseDatabase, IHelper, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
+import { IExpenseController, IExpenseDatabase, IHttpsResponse, IinputNewExpense } from '../interfaces/interfaces';
 
 export class ExpenseController implements IExpenseController {
     constructor(
         private readonly expenseDatabase: IExpenseDatabase, 
-        private readonly helper: IHelper
     ) {}
 
     async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse> {
