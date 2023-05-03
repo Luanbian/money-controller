@@ -1,12 +1,12 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import { baseURL } from '../api/api';
-import { styles } from '../styles/todolist.styled';
+import { useForm, Controller } from 'react-hook-form';
 import React, { useRef, useState } from 'react';
+import { Modalize } from 'react-native-modalize';
+import { styles } from '../styles/todolist.styled';
 import { TextInputMask } from 'react-native-masked-text';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import { Modalize } from 'react-native-modalize';
-import { useForm } from 'react-hook-form';
 import { View, TextInput, Pressable, Text } from 'react-native';
 
 interface IExpenseInput {
@@ -22,32 +22,36 @@ interface ListExpenses {
 }
 
 export const ExpensesFixedList = () => {
-  const {register, handleSubmit} = useForm<IExpenseInput>();
   const modalizeRef = useRef<Modalize>();
   const [popUp, setPopUp] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [inputExpense, setInputExpense] = useState('');
-  const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
+  const { control, handleSubmit } = useForm<IExpenseInput>({ defaultValues: { value: 0, expense: '' } });
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [selectedExpense, setSelectedExpense] = useState<number | null>(null);
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
   const { data: expenses, error } = useSWR<ListExpenses[]>(`${baseURL}/expense`, fetcher);
 
   const deletingExpense = expenses?.find((expense) => expense.id === deletingId);
 
-  const handleNewExpense = () => {
-    // axios.post(`${baseURL}/expense`, expense).then((response) => console.log(response.data));
+  const handleNewExpense = (expense: IExpenseInput) => {
+    const formatNumber = Number(expense.value);
+    const request: IExpenseInput = { expense: expense.expense, value: formatNumber };
+    axios.post(`${baseURL}/expense`, request).then((response) => console.log(response.data));
   };
 
-  const handleUpdateExpense = (id: number) => {
-    // axios.put(`${baseURL}/expense/${id}`, expense).then((response) => console.log(response.data));
+  const handleUpdateExpense = (expense: IExpenseInput) => {
+    const formatNumber = Number(expense.value);
+    const request: IExpenseInput = { expense: expense.expense, value: formatNumber };
+    if (selectedExpense) {
+      axios.put(`${baseURL}/expense/${selectedExpense}`, request).then((response) => console.log(response.data));
+    }
   };
 
   const handleDeleteExpense = (id: number) => {
-    // axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
+    axios.delete(`${baseURL}/expense/${id}`).then((response) => console.log(response.data));
   };
 
   const handleChangeIsPaid = (id: number) => {
-    // axios.put(`${baseURL}/expense/${id}/isPaid`).then((response) => console.log(response.data));
+    axios.put(`${baseURL}/expense/${id}/isPaid`).then((response) => console.log(response.data));
   };
 
   return (
@@ -55,31 +59,43 @@ export const ExpensesFixedList = () => {
       {popUp && (
         <>
           <>
-            <TextInput value={inputExpense} onChangeText={setInputExpense} placeholder="Nome da despesa" />
-            <TextInputMask
-              type={'money'}
-              value={inputValue}
-              onChangeText={setInputValue}
-              placeholder="Valor da despesa"
-              options={{
-                precision: 2,
-                separator: '.',
-                delimiter: '.',
-                unit: '',
-                suffixUnit: '',
-              }}
-              keyboardType="numeric"
+            <Controller
+              control={control}
+              name="expense"
+              render={({ field: { onChange, value } }) => (
+                <TextInput placeholder="Nome da despesa" onChangeText={onChange} value={value} />
+              )}
+            />
+            <Controller
+              control={control}
+              name="value"
+              render={({ field: { onChange, value } }) => (
+                <TextInputMask
+                  type={'money'}
+                  onChangeText={onChange}
+                  value={value.toString()}
+                  placeholder="Valor da despesa"
+                  options={{
+                    precision: 2,
+                    separator: '.',
+                    delimiter: '.',
+                    unit: '',
+                    suffixUnit: '',
+                  }}
+                  keyboardType="numeric"
+                />
+              )}
             />
           </>
           {!selectedExpense ? (
             <>
-              <Pressable onPress={handleNewExpense}>
+              <Pressable onPress={handleSubmit(handleNewExpense)}>
                 <Text>Adicionar despesa</Text>
               </Pressable>
             </>
           ) : (
             <>
-              <Pressable onPress={() => handleUpdateExpense(selectedExpense)}>
+              <Pressable onPress={handleSubmit(handleUpdateExpense)}>
                 <Text>Atualizar despesa</Text>
               </Pressable>
             </>
