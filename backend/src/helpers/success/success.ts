@@ -15,7 +15,4 @@ export class HttpResponseSuccess {
         return new HttpResponseSuccess(201, 'Created', data);
     }
 
-    static NoContent({ data }: IHttpsResponse): IHttpsResponse {
-        return new HttpResponseSuccess(204, 'No Content', data);
-    }
 }
