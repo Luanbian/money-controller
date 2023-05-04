@@ -5,16 +5,16 @@ export class HttpResponseErrors extends Error {
     super(message)
   }
 
-  static badRequest({ data }: IHttpsResponse): IHttpsResponse {
-    return new HttpResponseErrors(400, 'Bad Request', data);
+  static badRequest({ data, message }: IHttpsResponse): IHttpsResponse {
+    return new HttpResponseErrors(400, message ?? 'Bad Request', data);
   }
 
-  static internalServerError({ data }: IHttpsResponse): IHttpsResponse {
-    return new HttpResponseErrors(500, 'Internal Server Error', data);
+  static internalServerError({ data, message }: IHttpsResponse): IHttpsResponse {
+    return new HttpResponseErrors(500, message ?? 'Internal Server Error', data);
   }
 
-  static NotFound({ data }: IHttpsResponse): IHttpsResponse {
-    return new HttpResponseErrors(404, 'Not Found', data);
+  static NotFound({ data, message }: IHttpsResponse): IHttpsResponse {
+    return new HttpResponseErrors(404, message ?? 'Not Found', data);
   }
 
 }
