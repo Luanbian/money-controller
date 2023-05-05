@@ -11,7 +11,7 @@ describe('Create a new expense', () => {
         };
         await expect(expenseController.newExpense(input)).resolves.toEqual({
             statusCode: 201,
-            message: 'created',
+            message: 'Created',
             data: [ 1 ]
         });
         expect(expenseMock).toHaveBeenCalledOnce();
