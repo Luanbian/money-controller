@@ -11,7 +11,7 @@ export class ExpenseController implements IExpenseController {
         return HttpResponseSuccess.created({data : expenses })
     }
 
-    async expenses(): Promise<IHttpsResponse> {
+    public expenses = async (): Promise<IHttpsResponse> => {
         const expenses = await this.expenseDatabase.expenses();
         return HttpResponseSuccess.ok({data : expenses })
     }
