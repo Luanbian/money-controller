@@ -15,11 +15,7 @@ const IdSchema = z.object({
     id: z.string(),
 });
 
-router.get('/history', async (req, res) => {
-    const result = await gmailController.getTransaction();
-    res.json(result);
-});
-
+router.get('/history', makeMiddleware(gmailController.getTransaction));
 router.post('/expense', makeMiddleware(expenseController.newExpense))
 router.get('/expense', makeMiddleware(expenseController.expenses))
 router.put('/expense/:id', makeMiddleware(expenseController.updateExpense))

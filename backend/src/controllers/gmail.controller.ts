@@ -14,7 +14,7 @@ export class GmailController implements IGmailController {
     }
   }
 
-  async getTransaction(): Promise<Attributestype[]> {
+  public getTransaction = async(): Promise<Attributestype[]> => {
     return await this.setTransaction();
   }
 }
