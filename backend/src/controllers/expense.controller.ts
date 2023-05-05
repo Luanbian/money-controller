@@ -25,7 +25,7 @@ export class ExpenseController implements IExpenseController {
         return HttpResponseSuccess.ok({data : expenses })
     }
 
-    async deleteExpense(id: string): Promise<IHttpsResponse> {
+    public deleteExpense = async (expense: IinputNewExpense, id: string): Promise<IHttpsResponse> => {
         const expenses = await this.expenseDatabase.deleteExpense(id);
         return HttpResponseSuccess.ok({data : expenses })
     }

@@ -78,7 +78,7 @@ export interface IExpenseController {
   newExpense(expense: IinputNewExpense): Promise<IHttpsResponse>;
   expenses(): Promise<IHttpsResponse>;
   updateExpense(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
-  deleteExpense(id: string): Promise<IHttpsResponse>;
+  deleteExpense(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
   updateIsPaid(id: string): Promise<IHttpsResponse>;
 }
 
