@@ -30,7 +30,7 @@ export class ExpenseController implements IExpenseController {
         return HttpResponseSuccess.ok({data : expenses })
     }
 
-    async updateIsPaid(id: string): Promise<IHttpsResponse> {
+    public updateIsPaid = async (expense: IinputNewExpense, id: string): Promise<IHttpsResponse> => {
         const expenses = await this.expenseDatabase.updateIsPaid(id);
         return HttpResponseSuccess.ok({data : expenses })
     }

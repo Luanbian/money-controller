@@ -79,7 +79,7 @@ export interface IExpenseController {
   expenses(): Promise<IHttpsResponse>;
   updateExpense(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
   deleteExpense(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
-  updateIsPaid(id: string): Promise<IHttpsResponse>;
+  updateIsPaid(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
 }
 
 export interface IExpenseDatabase {
