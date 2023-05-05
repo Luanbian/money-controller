@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { makeGmailController, makeExpenseController } from "../app/factories";
 import { z } from 'zod';
+import { makeMiddleware } from "../middleware/makeMiddleware";
 
 export const router = Router();
 const gmailController = makeGmailController();
@@ -19,11 +20,8 @@ router.get('/history', async (req, res) => {
     res.json(result);
 });
 
-router.post('/expense', async (req, res) => {
-    const expense = ExpenseSchema.parse(req.body);
-    const result = await expenseController.newExpense(expense);
-    res.json(result);
-})
+router.post('/expense', makeMiddleware(expenseController.newExpense))
+
 router.get('/expense', async (req, res) => {
     const result = await expenseController.expenses();
     res.json(result);

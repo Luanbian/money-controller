@@ -3,7 +3,7 @@ import { IExpenseController, IExpenseDatabase, IHttpsResponse, IinputNewExpense 
 export class ExpenseController implements IExpenseController {
     constructor(private readonly expenseDatabase: IExpenseDatabase) {}
 
-    async newExpense(expense: IinputNewExpense): Promise<IHttpsResponse> {
+    public newExpense = async (expense: IinputNewExpense): Promise<IHttpsResponse> => {
         const expenses = await this.expenseDatabase.newExpense({
             expense: expense.expense,
             value: expense.value
