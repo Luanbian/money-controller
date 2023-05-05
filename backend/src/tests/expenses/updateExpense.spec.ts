@@ -2,7 +2,7 @@ import { describe, vi, it, expect } from "vitest";
 import { ExpenseController } from "../../controllers/expense.controller";
 
 describe('Update the expense name and value by id', () => {
-    it('should update expense', async () => {
+    it('should be able to update expense', async () => {
         const updateExpenseMock = vi.fn().mockResolvedValue([1]);
         const expenseController = new ExpenseController({updateExpense: updateExpenseMock} as any);
         const id = '1'
