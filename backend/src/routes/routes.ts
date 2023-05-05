@@ -23,12 +23,7 @@ router.get('/history', async (req, res) => {
 router.post('/expense', makeMiddleware(expenseController.newExpense))
 router.get('/expense', makeMiddleware(expenseController.expenses))
 
-router.put('/expense/:id', async (req, res) => {
-    const id = IdSchema.parse(req.params).id;
-    const expense = ExpenseSchema.parse(req.body);
-    const result = await expenseController.updateExpense(id, expense);
-    res.json(result);
-})
+router.put('/expense/:id', makeMiddleware(expenseController.updateExpense))
 router.delete('/expense/:id', async (req, res) => {
     const id = IdSchema.parse(req.params).id;
     const result = await expenseController.deleteExpense(id);

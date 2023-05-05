@@ -77,7 +77,7 @@ export interface IGmailGateway {
 export interface IExpenseController {
   newExpense(expense: IinputNewExpense): Promise<IHttpsResponse>;
   expenses(): Promise<IHttpsResponse>;
-  updateExpense(id: string, expense: IinputNewExpense): Promise<IHttpsResponse>;
+  updateExpense(expense: IinputNewExpense, id: string): Promise<IHttpsResponse>;
   deleteExpense(id: string): Promise<IHttpsResponse>;
   updateIsPaid(id: string): Promise<IHttpsResponse>;
 }
