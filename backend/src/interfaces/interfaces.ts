@@ -53,7 +53,7 @@ export interface IinputUpdateExpense {
 export interface IHttpsResponse {
   message?: string;
   statusCode?: number;
-  data?: number[] | IExpenseOutput[] | number
+  data?: IExpenseOutput[] | IinputNewExpense | string
 }
 
 export interface IExpenseOutput {
