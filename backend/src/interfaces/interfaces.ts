@@ -53,7 +53,7 @@ export interface IinputUpdateExpense {
 export interface IHttpsResponse {
   message?: string;
   statusCode?: number;
-  data?: number[] | IExpenseOutput | number
+  data?: number[] | IExpenseOutput[] | number
 }
 
 export interface IExpenseOutput {
@@ -84,7 +84,7 @@ export interface IExpenseController {
 
 export interface IExpenseDatabase {
   newExpense({ expense, value }: IinputNewExpense): Promise<number[] | undefined>;
-  expenses(): Promise<IExpenseOutput | undefined>;
+  expenses(): Promise<IExpenseOutput[] | undefined>;
   updateExpense({id, expense, value}: IinputUpdateExpense): Promise<number | undefined>;
   deleteExpense(id: string): Promise<number | undefined>;
   updateIsPaid(id: string): Promise<number | undefined>;

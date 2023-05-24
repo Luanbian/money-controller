@@ -1,0 +1,5 @@
+{
+  "expense-already-exists": "この費用はすでに存在します",
+  "expense-not-found": "Expense not found",
+  "internal-server-error" : "Internal Server Error"
+}
