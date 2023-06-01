@@ -15,7 +15,9 @@ export function makeHandler(handlerFn: (expense: IinputNewExpense, id: string) =
                 return res.status(400).json({messages: fileImported[error.message]})
             }
             if(error instanceof ZodError) {
-                return res.status(404).json({message: error.errors})
+                const format = error.message.replace(/\n/g,'').match(/"message":\s*"([^"]+)"/)
+                const message = format ? format[1] : null
+                return res.status(404).json({message})
             }
             return res.status(500).json({messages: fileImported["internal-server-error"]})
         }
